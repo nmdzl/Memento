@@ -11,6 +11,7 @@ import Browse from './components/Browse';
 import Profile from './components/Profile';
 import Login from './components/Login';
 import Signup from './components/Signup';
+import Error from './components/Error';
 
 
 function setToken (tokenValue) {
@@ -39,13 +40,14 @@ export default function App() {
             <Navigation getToken={getToken} handleLogout={handleLogout} />
             <Switch>
                 <Route exact path="/"><Main /></Route>
-                <Route exact path="/dashboard"><Dashboard getToken={getToken} handleLogout={handleLogout} /></Route>
+                <Route exact path="/dashboard/:uid" component={() => <Dashboard getToken={getToken} />} />
                 <Route exact path="/album/:aid" component={() => <Album getToken={getToken} />} />
                 <Route exact path="/users"><Users getToken={getToken} /></Route>
                 <Route exact path="/browse"><Browse /></Route>
                 <Route exact path="/profile/:uid" component={() => <Profile getToken={getToken} />} />
                 <Route exact path="/login"><Login isAuthed={isAuthed} setIsAuthed={setIsAuthed} setToken={setToken} /></Route>
                 <Route exact path="/signup"><Signup isAuthed={isAuthed} setIsAuthed={setIsAuthed} setToken={setToken} /></Route>
+                <Route exact path="/error"><Error /></Route>
             </Switch>
         </BrowserRouter>
         </>

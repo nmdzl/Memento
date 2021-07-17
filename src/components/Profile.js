@@ -31,7 +31,7 @@ class Profile extends React.Component {
         if (response.success) {
             this.setState({
                 loaded: true,
-                profile: response.data
+                profile: response.data.profile
             });
         } else {
             this.setState({

@@ -22,7 +22,7 @@ async function main() {
   await client.connect();
   console.log('Connected successfully to server');
   const db = client.db(dbName);
-  const collection = db.collection('users');
+  const collection = db.collection('albums');
 
     // try {
     //     const insertResult = await collection.insertOne({
@@ -36,16 +36,26 @@ async function main() {
     //     console.error(e);
     // }
 
-//   const findResult = await collection.find({}).toArray();
-//   console.log('Found documents =>', findResult);
+  // const findResult = await collection.find({}).toArray();
+  // console.log('Found documents =>', findResult);
 
-  const findResult = await collection.findOne({
-      _id: new ObjectId("60f2323d498816313827f791")
-  });
-  console.log('Found documents =>', findResult._id.toHexString());
+  // const findResult = await collection.findOne({
+  //     _id: new ObjectId("000000000000000000000001"),
+  //     uid: new ObjectId("000000000000000000000002")
+  // });
+  // console.log('Found documents =>', findResult);
 
 //   const filteredDocs = await collection.find({ a: 3 }).toArray();
 //   console.log('Found documents filtered by { a: 3 } =>', filteredDocs);
+
+  // const deleteResult = await collection.deleteMany({ _id: 789 });
+  // console.log('Deleted documents =>', deleteResult);
+
+  // const findResult = await collection.deleteOne({
+  //   _id: new ObjectId("000000000000000000000001"),
+  //   uid: new ObjectId("000000000000000000000002")
+  // });
+  // console.log('Found documents =>', findResult);
 
 //   await db.dropCollection('users');
 

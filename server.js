@@ -33,9 +33,10 @@ const serverStart = function (port, api) {
         api.getProfileByUid(uid).then(response => res.send(response));
     });
 
-    // fetch the user's albums list with authentication
-    app.post('/dashboard', (req, res) => {
-        api.getAllAlbumsWithAuth(req.body).then(response => res.send(response));
+    // fetch the user's albums list
+    app.get('/dashboard/:uid', (req, res) => {
+        const uid = req.params.uid;
+        api.getDashboardByUid(uid).then(response => res.send(response));
     });
 
     // fetch album data without children by aid
@@ -44,10 +45,28 @@ const serverStart = function (port, api) {
         api.getAlbumByAid(aid).then(response => res.send(response));
     });
 
-    // fetch users list
-    app.post('/users', (req, res) => {
+    // delete a list of albums with authentication
+    app.post('/album', (req, res) => {
+        if (req.body.type === 'delete') {
+            const token = req.body.token;
+            const aidList = req.body.aidList;
+            api.deleteAlbumsWithAuth(token, aidList).then(response => res.send(response));
+        }
+    });
+
+    app.post('/user', (req, res) => {
         const token = req.body.token;
-        api.getAllUsersWithAuth(token).then(response => res.send(response));
+        switch (req.body.type) {
+            // fetch users list with authentication
+            case 'fetch':
+                api.getAllUsersWithAuth(token).then(response => res.send(response));
+                return;
+            // delete a list of users with authentication
+            case 'delete':
+                const uidList = req.body.uidList;
+                api.deleteUsersWithAuth(token, uidList).then(response => res.send(response));
+                return;
+        }
     });
 
     app.listen(port, () => console.log('API is running at port ' + port));
@@ -129,9 +148,9 @@ async function signup(userInfo) {
 }
 
 async function getProfileByUid(uid) {
-    var formattedId;
+    var formattedUid;
     try {
-        formattedId = new ObjectId(uid);
+        formattedUid = new ObjectId(uid);
     } catch (e) {
         console.error(e + '[fetch profile with uid]');
         return {
@@ -143,13 +162,13 @@ async function getProfileByUid(uid) {
     await client.connect();
     const db = client.db(dbName);
     const collectionProfiles = db.collection('profiles');
-    const profile = await collectionProfiles.findOne({ _id: formattedId });
+    const profile = await collectionProfiles.findOne({ _id: formattedUid });
     const response = {};
     if (profile) {
         response.success = true;
         profile.uid = profile._id.toHexString();
         delete profile._id;
-        response.data = profile;
+        response.data = { profile: profile };
     } else {
         response.success = false;
         response.error = 'Profile not found (uid=' + uid + ')';
@@ -159,7 +178,43 @@ async function getProfileByUid(uid) {
     return response;
 }
 
-async function getAllAlbumsWithAuth(token) {
+async function getDashboardByUid(uid) {
+    var formattedUid;
+    try {
+        formattedUid = new ObjectId(uid);
+    } catch (e) {
+        console.error(e + '[fetch profile with uid]');
+        return {
+            success: false,
+            error: e
+        };
+    }
+    const client = new MongoClient(url);
+    await client.connect();
+    const db = client.db(dbName);
+    const collectionUsers = db.collection('users');
+    const user = await collectionUsers.findOne({ _id: formattedUid });
+    if (!user) {
+        client.close();
+        return {
+            success: false,
+            error: "Invalid user id"
+        };
+    }
+    const collectionAlbums = db.collection('albums');
+    const allAlbums = await collectionAlbums.find({uid: user._id}).toArray();
+    allAlbums.forEach((album) => {
+        album.aid = album._id.toHexString();
+        delete album._id;
+    });
+    client.close();
+    return {
+        success: true,
+        data: { albums: allAlbums}
+    };
+}
+
+async function deleteAlbumsWithAuth(token, aidList) {
     const client = new MongoClient(url);
     await client.connect();
     const db = client.db(dbName);
@@ -169,23 +224,30 @@ async function getAllAlbumsWithAuth(token) {
         password: token.password
     }
     const user = await collectionUsers.findOne(credentials);
-    const response = {};
     if (user) {
         const collectionAlbums = db.collection('albums');
-        const allAlbums = await collectionAlbums.find({uid: user._id}).toArray();
-        allAlbums.forEach((album) => {
-            album.aid = album._id.toHexString();
-            delete album._id;
+        var promiseList = [];
+        aidList.forEach(aid => {
+            try {
+                const formattedAid = new ObjectId(aid);
+                promiseList.push(new Promise(res => res(collectionAlbums.deleteOne({ _id: formattedAid, uid: user._id }))));
+            } catch (e) {
+                console.error(e + "[aid=" + aid + "]");
+            }
         });
-        response.success = true;
-        response.data = allAlbums;
+        const response = await Promise.all(promiseList)
+            .then(results => results.reduce((acc, result) => acc + (result.acknowledged ? result.deletedCount : 0)))
+            .then(count => { return { success: true, data: { count: count } } });
+        client.close();
+        return response;
     } else {
-        response.success = false,
-        response.error = "Authentication failed";
-        console.error("Authentication failed[get album list]");
+        client.close();
+        console.error("Authentication failed[delete a list of albums]");
+        return {
+            success: false,
+            error: "Authentication failed"
+        };
     }
-    client.close();
-    return response;
 }
 
 async function getAllUsersWithAuth(token) {
@@ -199,14 +261,14 @@ async function getAllUsersWithAuth(token) {
     }
     const user = await collectionUsers.findOne(credentials);
     const response = {};
-    if (user && user.role <= 5) {
+    if (user && user.role <= 1) {
         const allUsers = await collectionUsers.find({ role: { $gt: user.role} }, {password: 0, role: 0}).toArray();
         allUsers.forEach((_user) => {
             _user.uid = _user._id.toHexString();
             delete _user._id;
         });
         response.success = true;
-        response.data = allUsers;
+        response.data = { users: allUsers };
     } else {
         response.success = false,
         response.error = "You do not have the access right";
@@ -214,6 +276,41 @@ async function getAllUsersWithAuth(token) {
     }
     client.close();
     return response;
+}
+
+async function deleteUsersWithAuth(token, uidList) {
+    const client = new MongoClient(url);
+    await client.connect();
+    const db = client.db(dbName);
+    const collectionUsers = db.collection('users');
+    const credentials = {
+        email: token.email,
+        password: token.password
+    }
+    const user = await collectionUsers.findOne(credentials);
+    if (user && user.role <= 1) {
+        var promiseList = [];
+        uidList.forEach(uid => {
+            try {
+                const formattedUid = new ObjectId(uid);
+                promiseList.push(new Promise(res => res(collectionUsers.deleteOne({ _id: formattedUid, role: { $gt: user.role } }))));
+            } catch (e) {
+                console.error(e + "[uid=" + uid + "]");
+            }
+        });
+        const response = await Promise.all(promiseList)
+            .then(results => results.reduce((acc, result) => acc + (result.acknowledged ? result.deletedCount : 0)))
+            .then(count => { return { success: true, data: { count: count } } });
+        client.close();
+        return response;
+    } else {
+        client.close();
+        console.error("Authentication failed[delete a list of users]");
+        return {
+            success: false,
+            error: "Authentication failed"
+        };
+    }
 }
 
 async function getAlbumByAid(aid) {
@@ -240,7 +337,7 @@ async function getAlbumByAid(aid) {
         album.aid = album._id.toHexString();
         delete album._id;
         album.username = author.name;
-        response.data = album;
+        response.data = { album: album };
     } else {
         response.success = false;
         response.error = 'Album not found (aid=' + aid + ')';
@@ -254,8 +351,10 @@ async function getAlbumByAid(aid) {
 const mongodbAPI = {
     login: login,  // {email: xxx, password: xxx}
     signup: signup,  // {email: xxx, password: xxx, gender: xxx, age: xxx}
-    getAllAlbumsWithAuth: getAllAlbumsWithAuth,  // {uid: xxx}
+    getDashboardByUid: getDashboardByUid,  // uid
+    deleteAlbumsWithAuth: deleteAlbumsWithAuth,  // {token: xxx, aidList: xxx}
     getAllUsersWithAuth: getAllUsersWithAuth,  // token
+    deleteUsersWithAuth: deleteUsersWithAuth,  // {token: xxx, aidList: xxx}
     getProfileByUid: getProfileByUid,  // uid
     getAlbumByAid: getAlbumByAid  // aid
 };

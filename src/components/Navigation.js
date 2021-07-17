@@ -40,7 +40,7 @@ class Navigation extends React.Component {
                                     ) : (
                                         <button className="navigation-button"
                                             style={focus_css("/dashboard")}
-                                            onClick={() => history.push("/dashboard")}
+                                            onClick={() => history.push("/dashboard/" + token.uid)}
                                             >Dashboard</button>
                                     )
                                 ) : null}

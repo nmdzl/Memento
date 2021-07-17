@@ -6,13 +6,27 @@ import AlbumList from './AlbumList';
 import { withRouter } from 'react-router-dom';
 
 
-async function fetchData(token) {
-    return fetch('http://localhost:8080/dashboard', {
+async function fetchData(uid) {
+    return fetch('http://localhost:8080/dashboard/' + uid, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(data => data.json());
+}
+
+async function postDeleteRequest(token, aidList) {
+    return fetch('http://localhost:8080/album', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify(token)
+        body: JSON.stringify({
+            type: 'delete',
+            token: token,
+            uidList: aidList
+        })
     })
     .then(data => data.json());
 }
@@ -27,13 +41,13 @@ class Dashboard extends React.Component {
             checked: [],
             checkedCount: 0,
             checkedAll: false,
-            popupNewAlbum: false,
-            newAlbumTitle: ""
+            popupNewAlbum: false
         };
 
         this.setPopupNewAlbum = this.setPopupNewAlbum.bind(this);
-        this.setNewAlbumTitle = this.setNewAlbumTitle.bind(this);
         this.loadAlbums = this.loadAlbums.bind(this);
+        this.handleDelete = this.handleDelete.bind(this);
+        this.handleCreateAlbum = this.handleCreateAlbum.bind(this);
         this.toggleCheck = this.toggleCheck.bind(this);
         this.toggleCheckAll = this.toggleCheckAll.bind(this);
     }
@@ -42,17 +56,13 @@ class Dashboard extends React.Component {
         this.setState({ popupNewAlbum: popupNewAlbum });
     }
 
-    setNewAlbumTitle (newAlbumTitle) {
-        this.setState({ newAlbumTitle: newAlbumTitle });
-    }
-
-    async loadAlbums (token) {
-        const response = await fetchData(token);
+    async loadAlbums (uid) {
+        const response = await fetchData(uid);
         if (response.success) {
             this.setState({
                 loaded: true,
-                albums: response.data,
-                checked: Array(response.data.length).fill(false)
+                albums: response.data.albums,
+                checked: Array(response.data.albums.length).fill(false)
             });
         } else {
             this.setState({
@@ -61,6 +71,37 @@ class Dashboard extends React.Component {
                 checked: []
             });
         }
+    }
+
+    async handleDelete() {
+        if (!this.state.albums) return;
+        var aidList = [];
+        this.state.albums.forEach((album, ind) => {
+            if (this.state.checked[ind]) aidList.push(album.aid);
+        });
+        if (aidList.length === 0) return;
+        const { getToken, history } = this.props;
+        const token = getToken();
+        if (!token) {
+            history.push({
+                pathname: "/error",
+                state: { detail: "You have clicked a button which is not supposed to exist" }
+            });
+        }
+        const response = await postDeleteRequest(token, aidList);
+        if (response.success) {
+            const { uid } = this.props.match.params;
+            this.loadAlbums(uid);
+        } else {
+            history.push({
+                pathname: "/error",
+                state: { detail: "You have clicked a button which is not supposed to exist" }
+            });
+        }
+    }
+
+    async handleCreateAlbum(title) {
+
     }
 
     toggleCheck (ind) {
@@ -94,7 +135,7 @@ class Dashboard extends React.Component {
     }
 
     render() {
-        const { getToken, history } = this.props;
+        const { getToken } = this.props;
         const token = getToken();
         if (!token) {
             return (
@@ -121,12 +162,11 @@ class Dashboard extends React.Component {
                         <div ref={ele => this.newAlbumWindow = ele} className="dashboard-row">
                             <div className="dashboard-newalbum-cell-1">
                                 <input className="dashboard-newalbum-input"
-                                    placeholder={this.state.newAlbumTitle ? this.state.newAlbumTitle : "Please enter the title..."}
-                                    value={this.state.newAlbumTitle}
-                                    onChange={(e) => this.setNewAlbumTitle(e.target.value)}
+                                    rel={ele => this.newAlbumTitleInput = ele}
+                                    placeholder="Please enter the title..."
                                 />
                             </div>
-                            <button className="dashboard-newalbum-cell-2 dashboard-button dashboard-newalbum-button" onClick={() => history.push("/dashboard")}>Create</button>
+                            <button className="dashboard-newalbum-cell-2 dashboard-button dashboard-newalbum-button" onClick={() => this.handleCreateAlbum(this.newAlbumTitleInput.value)}>Create</button>
                             <button className="dashboard-newalbum-cell-3 dashboard-button dashboard-newalbum-button" onClick={() => this.setPopupNewAlbum(false)}>Cancel</button>
                         </div>
                     ) : null}
@@ -155,10 +195,9 @@ class Dashboard extends React.Component {
     }
 
     componentDidMount() {
-        const { getToken } = this.props;
-        const token = getToken();
-        if (token) {
-            this.loadAlbums(token);
+        if (!this.state.loaded) {
+            const { uid } = this.props.match.params;
+            this.loadAlbums(uid);
         }
     }
 }

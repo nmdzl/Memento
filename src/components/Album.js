@@ -14,6 +14,21 @@ async function fetchData(aid) {
     .then(data => data.json());
 }
 
+async function postDeleteRequest(token, aid) {
+    return fetch('http://localhost:8080/album', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            type: 'delete',
+            token: token,
+            aidList: [aid]
+        })
+    })
+    .then(data => data.json());
+}
+
 class Album extends React.Component {
     constructor(props) {
         super(props);
@@ -24,6 +39,7 @@ class Album extends React.Component {
         };
 
         this.loadAlbum = this.loadAlbum.bind(this);
+        this.handleDelete = this.handleDelete.bind(this);
     }
 
     async loadAlbum(aid) {
@@ -31,12 +47,27 @@ class Album extends React.Component {
         if (response.success) {
             this.setState({
                 loaded: true,
-                album: response.data
+                album: response.data.album
             });
         } else {
             this.setState({
                 loaded: true,
                 album: undefined
+            });
+        }
+    }
+
+    async handleDelete () {
+        const { aid } = this.props.match.params;
+        const { getToken, history } = this.props;
+        const token = getToken();
+        const response = await postDeleteRequest(token, aid);
+        if (response.success) {
+            history.goBack();
+        } else {
+            history.push({
+                pathname: "/error",
+                state: { detail: "You have clicked a button which is not supposed to exist" }
             });
         }
     }
@@ -57,7 +88,7 @@ class Album extends React.Component {
                         <div className="dashboard-row album-table-container">
                             <button className="dashboard-button" onClick={() => history.push("/album/" + aid + "/full")}>View full list</button>
                             {token.uid === this.state.album.uid ?
-                                <button className="dashboard-button" onClick={() => history.push("/album/delete/" + aid)}>Delete</button>
+                                <button className="dashboard-button" onClick={this.handleDelete}>Delete</button>
                                 : null}
                         </div>
 
