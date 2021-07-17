@@ -14,9 +14,9 @@ const dropDatabase = async () => {
 }
 
 
-// *********************
-// Following are schemas
-// *********************
+// ****************
+// Define DB Schema
+// ****************
 
 const schemaUsers = {
     $jsonSchema: {

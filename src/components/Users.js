@@ -6,21 +6,21 @@ import UserList from './UserList';
 import { withRouter } from 'react-router';
 
 
-async function fetchData(token) {
+async function fetchData(data) {
     return fetch('http://localhost:8080/user', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-            type: 'fetch',
-            token: token
+            type: 'read',
+            data: data
         })
     })
     .then(data => data.json());
 }
 
-async function postDeleteRequest(token, uidList) {
+async function postDeleteRequest(data) {
     return fetch('http://localhost:8080/user', {
         method: 'POST',
         headers: {
@@ -28,8 +28,7 @@ async function postDeleteRequest(token, uidList) {
         },
         body: JSON.stringify({
             type: 'delete',
-            token: token,
-            uidList: uidList
+            data: data
         })
     })
     .then(data => data.json());
@@ -54,7 +53,7 @@ class Users extends React.Component {
     }
 
     async loadUsers(token) {
-        const response = await fetchData(token);
+        const response = await fetchData({ token: token });
         if (response.success) {
             this.setState({
                 loaded: true,
@@ -64,6 +63,7 @@ class Users extends React.Component {
                 checkedAll: false
             });
         } else {
+            console.error(response.error);
             this.setState({
                 loaded: true,
                 users: undefined,
@@ -83,10 +83,16 @@ class Users extends React.Component {
         if (uidList.length === 0) return;
         const { getToken, history } = this.props;
         const token = getToken();
-        const response = await postDeleteRequest(token, uidList);
+        if (!token) return;
+        const data = {
+            token: token,
+            uidList: uidList
+        };
+        const response = await postDeleteRequest(data);
         if (response.success) {
             this.loadUsers(token);
         } else {
+            console.error(response.error);
             history.push({
                 pathname: "/error",
                 state: { detail: "You have clicked a button which is not supposed to exist" }

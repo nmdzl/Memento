@@ -34,6 +34,7 @@ class Profile extends React.Component {
                 profile: response.data.profile
             });
         } else {
+            console.error(response.error);
             this.setState({
                 loaded: true,
                 profile: undefined

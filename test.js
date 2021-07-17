@@ -22,7 +22,7 @@ async function main() {
   await client.connect();
   console.log('Connected successfully to server');
   const db = client.db(dbName);
-  const collection = db.collection('albums');
+  const collection = db.collection('users');
 
     // try {
     //     const insertResult = await collection.insertOne({
@@ -36,8 +36,8 @@ async function main() {
     //     console.error(e);
     // }
 
-  // const findResult = await collection.find({}).toArray();
-  // console.log('Found documents =>', findResult);
+  const findResult = await collection.find({}).toArray();
+  console.log('Found documents =>', findResult);
 
   // const findResult = await collection.findOne({
   //     _id: new ObjectId("000000000000000000000001"),
@@ -47,6 +47,9 @@ async function main() {
 
 //   const filteredDocs = await collection.find({ a: 3 }).toArray();
 //   console.log('Found documents filtered by { a: 3 } =>', filteredDocs);
+
+  // const updateResult = await collection.updateOne({ _id: new ObjectId("000000009000400000690098") }, { $set: { role: 100 } })
+  // console.log('Updated documents =>', updateResult)
 
   // const deleteResult = await collection.deleteMany({ _id: 789 });
   // console.log('Deleted documents =>', deleteResult);

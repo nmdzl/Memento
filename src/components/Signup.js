@@ -4,13 +4,15 @@ import '../css/Signup.css';
 import { withRouter } from 'react-router-dom';
 
 
-async function signupUser (userInfo) {
+async function signupUser(data) {
     return fetch('http://localhost:8080/signup', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify(userInfo)
+        body: JSON.stringify({
+            data: data
+        })
     })
     .then(data => data.json());
 }
@@ -68,26 +70,30 @@ class Signup extends React.Component {
     }
     
     async handleSubmit (e) {
-        const { setIsAuthed, setToken, history } = this.props;
         e.preventDefault();
+        const { setIsAuthed, setToken, history } = this.props;
         if (!this.state.passwordMatched) {
             this.setState({
                 popupPasswordNotMatched: true
             });
             return;
         }
-        const response = await signupUser({
-            name: this.state.name,
-            email: this.state.email,
-            password: this.state.password,
-            gender: this.state.gender,
-            age: parseInt(this.state.age)
-        });
+        const data = {
+            userInfo: {
+                name: this.state.name,
+                email: this.state.email,
+                password: this.state.password,
+                gender: this.state.gender,
+                age: parseInt(this.state.age)
+            }
+        };
+        const response = await signupUser(data);
         if (response.success) {
             setToken(response.data.token);
             setIsAuthed(true);
             history.goBack();
         } else {
+            console.error(response.error);
             setToken(null);
             setIsAuthed(false);
             this.setState({
@@ -138,7 +144,7 @@ class Signup extends React.Component {
                         <p>Age</p>
                         <input type="number" min="1" max="200"onChange={e => this.setAge(e.target.value)} />
                     </label>
-                    <div className="signup-submit">
+                    <div className="signup-submit-container">
                         <button className="sigup-submit" type="submit">Sign Up</button>
                     </div>
                 </form>

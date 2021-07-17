@@ -16,7 +16,7 @@ async function fetchData(uid) {
     .then(data => data.json());
 }
 
-async function postDeleteRequest(token, aidList) {
+async function postDeleteRequest(data) {
     return fetch('http://localhost:8080/album', {
         method: 'POST',
         headers: {
@@ -24,8 +24,21 @@ async function postDeleteRequest(token, aidList) {
         },
         body: JSON.stringify({
             type: 'delete',
-            token: token,
-            uidList: aidList
+            data: data
+        })
+    })
+    .then(data => data.json());
+}
+
+async function postNewAlbum(data) {
+    return fetch('http://localhost:8080/album', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            type: 'create',
+            data: data
         })
     })
     .then(data => data.json());
@@ -65,6 +78,7 @@ class Dashboard extends React.Component {
                 checked: Array(response.data.albums.length).fill(false)
             });
         } else {
+            console.error(response.error);
             this.setState({
                 loaded: true,
                 albums: undefined,
@@ -88,11 +102,16 @@ class Dashboard extends React.Component {
                 state: { detail: "You have clicked a button which is not supposed to exist" }
             });
         }
-        const response = await postDeleteRequest(token, aidList);
+        const data = {
+            token: token,
+            aidList: aidList
+        };
+        const response = await postDeleteRequest(data);
         if (response.success) {
             const { uid } = this.props.match.params;
             this.loadAlbums(uid);
         } else {
+            console.error(response.error);
             history.push({
                 pathname: "/error",
                 state: { detail: "You have clicked a button which is not supposed to exist" }
@@ -100,8 +119,24 @@ class Dashboard extends React.Component {
         }
     }
 
-    async handleCreateAlbum(title) {
-
+    async handleCreateAlbum() {
+        if (!this.newAlbumTitleInput) return;
+        const { getToken } = this.props;
+        const token = getToken();
+        if (!token) return;
+        const  { history } = this.props;
+        var title = this.newAlbumTitleInput.value;
+        if (!title) title = "Undefined";
+        const data = {
+            token: token,
+            title: title
+        };
+        const response = await postNewAlbum(data);
+        if (response.success) {
+            history.push("/album/" + response.data.aid);
+        } else {
+            console.error(response.error);
+        }
     }
 
     toggleCheck (ind) {
@@ -137,15 +172,6 @@ class Dashboard extends React.Component {
     render() {
         const { getToken } = this.props;
         const token = getToken();
-        if (!token) {
-            return (
-                <div className="dashboard">
-                    <div className="dashboard-title-container">Dashboard</div>
-
-                    <div className="dashboard-message-container">You haven't logged in.</div>
-                </div>
-            );
-        }
 
         return (
             <div className="dashboard">
@@ -153,23 +179,29 @@ class Dashboard extends React.Component {
 
                 <div className="dashboard-table-container">
 
-                    <div className="dashboard-row">
-                        <button className="dashboard-button" onClick={() => this.setPopupNewAlbum(true)}>New</button>
-                        <button className="dashboard-button">Delete</button>
-                    </div>
+                    {token ? (
+                        <>
 
-                    {this.state.popupNewAlbum ? (
-                        <div ref={ele => this.newAlbumWindow = ele} className="dashboard-row">
-                            <div className="dashboard-newalbum-cell-1">
-                                <input className="dashboard-newalbum-input"
-                                    rel={ele => this.newAlbumTitleInput = ele}
-                                    placeholder="Please enter the title..."
-                                />
-                            </div>
-                            <button className="dashboard-newalbum-cell-2 dashboard-button dashboard-newalbum-button" onClick={() => this.handleCreateAlbum(this.newAlbumTitleInput.value)}>Create</button>
-                            <button className="dashboard-newalbum-cell-3 dashboard-button dashboard-newalbum-button" onClick={() => this.setPopupNewAlbum(false)}>Cancel</button>
+                        <div className="dashboard-row">
+                            <button className="dashboard-button" onClick={() => this.setPopupNewAlbum(true)}>New</button>
+                            <button className="dashboard-button" onClick={this.handleDelete}>Delete</button>
                         </div>
-                    ) : null}
+
+                        {this.state.popupNewAlbum ? (
+                            <div className="dashboard-row">
+                                <div className="dashboard-newalbum-cell-1">
+                                    <input className="dashboard-newalbum-input"
+                                        ref={ele => this.newAlbumTitleInput = ele}
+                                        placeholder="Please enter the title..."
+                                    />
+                                </div>
+                                <button className="dashboard-newalbum-cell-2 dashboard-button dashboard-newalbum-button" onClick={() => this.handleCreateAlbum()}>Create</button>
+                                <button className="dashboard-newalbum-cell-3 dashboard-button dashboard-newalbum-button" onClick={() => this.setPopupNewAlbum(false)}>Cancel</button>
+                            </div>
+                        ) : null}
+
+                        </>
+                        ) : null}
 
                     <div className="dashboard-row">
                         <div ref={ele => this.checkAllBox = ele} className="dashboard-table-cell-0">

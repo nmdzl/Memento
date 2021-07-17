@@ -4,13 +4,15 @@ import '../css/Login.css';
 import { withRouter } from 'react-router-dom';
 
 
-async function loginUser (credentials) {
+async function loginUser (data) {
     return fetch('http://localhost:8080/login', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify(credentials)
+        body: JSON.stringify({
+            data: data
+        })
     })
     .then(data => data.json());
 }
@@ -43,16 +45,19 @@ class Login extends React.Component {
     async handleSubmit (e) {
         const { setIsAuthed, setToken, history } = this.props;
         e.preventDefault();
-        const response = await loginUser({
-            email: this.state.email,
-            password: this.state.password
-        });
+        const data = {
+            credentials: {
+                email: this.state.email,
+                password: this.state.password
+            }
+        };
+        const response = await loginUser(data);
         if (response.success) {
             setToken(response.data.token);
-            console.log("token set:", response.data.token);
             setIsAuthed(true);
             history.goBack();
         } else {
+            console.error(response.error);
             setToken(null);
             setIsAuthed(false);
             this.setState({
@@ -69,7 +74,8 @@ class Login extends React.Component {
                 <h2>Please Login</h2>
 
                 {this.state.popupAuthFailed ?
-                    <div className="login-message-container">Authentication failed...</div> : null}
+                    <div className="login-message-container">Authentication failed...</div>
+                    : null}
                 
                 <form onSubmit={this.handleSubmit}>
                     <label>
