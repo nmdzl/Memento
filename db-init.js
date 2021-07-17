@@ -5,6 +5,15 @@ const { MongoClient, ObjectId } = require('mongodb');
 const url = "mongodb://localhost:" + mongodbPort;
 
 
+const dropDatabase = async () => {
+    const client = new MongoClient(url);
+    await client.connect();
+    const db = client.db(dbName);
+    await db.dropDatabase();
+    client.close();
+}
+
+
 // *********************
 // Following are schemas
 // *********************
@@ -68,7 +77,7 @@ const schemaAlbums = {
         required: ['uid', 'title', 'createtime', 'size'],
         properties: {
             uid: {
-                bsonType: "object",
+                bsonType: "objectId",
                 description: "uid of the author as ObjectId"
             },
             title: {
@@ -164,14 +173,6 @@ const insertItems = async (tableName, items) => {
     client.close();
 }
 
-const dropDatabase = async () => {
-    const client = new MongoClient(url);
-    await client.connect();
-    const db = client.db(dbName);
-    await db.dropDatabase();
-    client.close();
-}
-
 
 // ****************************
 // Handle the unique properties
@@ -182,11 +183,11 @@ const createDatabaseAndTables = async () => {
     const client = new MongoClient(url);
     await client.connect();
     const db = client.db(dbName);
-    db.createCollection("users", { validator: schemaUsers });
-    db.createCollection("profiles", { validator: schemaProfiles });
-    db.createCollection("albums", { validator: schemaAlbums });
-    db.collection('users').createIndex({ 'email': 1 }, { unique: true });
-    db.collection('albums').createIndex({'uid': 1});
+    await db.createCollection("users", { validator: schemaUsers });
+    await db.createCollection("profiles", { validator: schemaProfiles });
+    await db.createCollection("albums", { validator: schemaAlbums });
+    await db.collection('users').createIndex({ 'email': 1 }, { unique: true });
+    await db.collection('albums').createIndex({ 'uid': 1 });
     client.close();
 }
 

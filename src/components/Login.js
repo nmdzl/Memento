@@ -49,6 +49,7 @@ class Login extends React.Component {
         });
         if (response.success) {
             setToken(response.data.token);
+            console.log("token set:", response.data.token);
             setIsAuthed(true);
             history.goBack();
         } else {

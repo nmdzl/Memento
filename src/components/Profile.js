@@ -45,18 +45,6 @@ class Profile extends React.Component {
         const { getToken, history } = this.props;
         const token = getToken();
 
-        if (!token) {
-            return (
-                <div className="profile">
-                    <div className="profile-title-container">Profile</div>
-
-                    <div className="profile-row">
-                        <div className="profile-message-container">You haven't logged in.</div>
-                    </div>
-                </div>
-            );
-        }
-
         return (
             <div className="profile">
                 <div className="profile-title-container">Profile</div>
@@ -87,14 +75,14 @@ class Profile extends React.Component {
                             </div>
 
                             
-                            {(token.role <= 1 && this.state.profile.uid !== token.token.uid) ? (
+                            {(token && token.role <= 1 && this.state.profile.uid !== token.uid) ? (
                                 <div className="profile-row profile-row-buttons">
-                                    <button className="profile-button" onClick={() => history.push("/users/delete/" + token.token.uid)}>Delete User</button>
+                                    <button className="profile-button" onClick={() => history.push("/users/delete/" + token.uid)}>Delete User</button>
                                 </div>
                             ) : null}
                         </div>
                     ) : (
-                        <div className="profile-message-container">You don't have access to this page.</div>
+                        <div className="profile-message-container">Profile not found</div>
                     )
                 ) : (
                     <div className="profile-message-container">Loading...</div>
@@ -104,9 +92,7 @@ class Profile extends React.Component {
     }
 
     componentDidMount() {
-        const { getToken } = this.props;
-        const token = getToken();
-        if (token && !this.state.loaded) {
+        if (!this.state.loaded) {
             const { uid } = this.props.match.params;
             this.loadProfile(uid);
         }

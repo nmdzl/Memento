@@ -1,6 +1,8 @@
 import React from 'react';
 import '../css/Album.css';
 
+import { withRouter } from 'react-router';
+
 
 async function fetchData(aid) {
     return fetch('http://localhost:8080/album/' + aid, {
@@ -12,7 +14,7 @@ async function fetchData(aid) {
     .then(data => data.json());
 }
 
-export default class Album extends React.Component {
+class Album extends React.Component {
     constructor(props) {
         super(props);
 
@@ -25,47 +27,71 @@ export default class Album extends React.Component {
     }
 
     async loadAlbum(aid) {
-        const album = await fetchData(aid);
-        this.setState({
-            loaded: true,
-            album: album
-        });
+        const response = await fetchData(aid);
+        if (response.success) {
+            this.setState({
+                loaded: true,
+                album: response.data
+            });
+        } else {
+            this.setState({
+                loaded: true,
+                album: undefined
+            });
+        }
     }
 
     render() {
+        const { aid } = this.props.match.params;
+        const { getToken, history } = this.props;
+        const token = getToken();
+
         return (
             <div className="album">
-                <div className="album-title-container">{this.state.loaded ? this.state.album.title : `Loading Album...`}</div>
+                <div className="album-title-container">{this.state.album ? this.state.album.title : "Album"}</div>
 
                 {this.state.loaded ? (
-                    <>
+                    this.state.album ? (
+                        <>
 
-                    <div className="album-cover-container">
-                        <img alt={"cover for album " + this.state.album.title} />
-                    </div>
+                        <div className="dashboard-row album-table-container">
+                            <button className="dashboard-button" onClick={() => history.push("/album/" + aid + "/full")}>View full list</button>
+                            {token.uid === this.state.album.uid ?
+                                <button className="dashboard-button" onClick={() => history.push("/album/delete/" + aid)}>Delete</button>
+                                : null}
+                        </div>
 
-                    <div className="album-table-container">
+                        <div className="album-cover-container">
+                            <img alt={"cover for album"} />
+                        </div>
 
-                        <div className="album-row">
-                            <div className="album-table-cell-1">Author</div>
-                            <div className="album-table-cell-2">{this.state.album.username}</div>
-                        </div>
-                        <div className="album-row">
-                            <div className="album-table-cell-1">Created At</div>
-                            <div className="album-table-cell-2">{this.state.album.createtime}</div>
-                        </div>
-                        <div className="album-row">
-                            <div className="album-table-cell-1">Intro</div>
-                            <div className="album-table-cell-2">{this.state.album.intro}</div>
-                        </div>
-                        <div className="album-row">
-                            <div className="album-table-cell-1">Number of Contents</div>
-                            <div className="album-table-cell-2">{this.state.album.size}</div>
-                        </div>
-                    </div>
+                        <div className="album-table-container">
 
-                    </>
-                ) : null}
+                            <div className="album-row">
+                                <div className="album-table-cell-1">Author</div>
+                                <div className="album-table-cell-2">{this.state.album.username}</div>
+                            </div>
+                            <div className="album-row">
+                                <div className="album-table-cell-1">Created At</div>
+                                <div className="album-table-cell-2">{this.state.album.createtime}</div>
+                            </div>
+                            <div className="album-row">
+                                <div className="album-table-cell-1">Intro</div>
+                                <div className="album-table-cell-2">{this.state.album.intro}</div>
+                            </div>
+                            <div className="album-row">
+                                <div className="album-table-cell-1">Number of Contents</div>
+                                <div className="album-table-cell-2">{this.state.album.size}</div>
+                            </div>
+                        </div>
+
+                        </>
+                    ) : (
+                        <div className="album-message-container">Profile not found</div>
+                    )
+                ) : (
+                    <div className="album-message-container">Loading...</div>
+                )}
             </div>
         );
     }
@@ -75,3 +101,5 @@ export default class Album extends React.Component {
         this.loadAlbum(aid);
     }
 }
+
+export default withRouter (Album);

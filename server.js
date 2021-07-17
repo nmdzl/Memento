@@ -1,3 +1,7 @@
+const dbName = 'memento';
+const serverPort = 8080;
+
+
 const getFormattedTime = () => {
     const date = new Date();
     const offset = date.getTimezoneOffset();
@@ -23,32 +27,21 @@ const serverStart = function (port, api) {
         api.signup(req.body).then(response => res.send(response));
     });
 
-    // fetch user profile with uid
+    // fetch user profile by uid
     app.get('/profile/:uid', (req, res) => {
         const uid = req.params.uid;
-        api.getProfileWithUid(uid).then(response => res.send(response));
+        api.getProfileByUid(uid).then(response => res.send(response));
     });
 
-    // fetch user's albums list
+    // fetch the user's albums list with authentication
     app.post('/dashboard', (req, res) => {
-        const token = req.body.token;
-        api.getAllAlbumsWithAuth(token).then(response => res.send(response));
+        api.getAllAlbumsWithAuth(req.body).then(response => res.send(response));
     });
 
-    // fetch album data without children
+    // fetch album data without children by aid
     app.get('/album/:aid', (req, res) => {
         const aid = req.params.aid;
-        const album = {
-            aid: aid,
-            title: "This is a fake album.",
-            cover: "fake cover url",
-            size: "55",
-            createtime: "aabbcc",
-            intro: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-            uid: "1",
-            username: "first fake user"
-        };
-        res.send(album);
+        api.getAlbumByAid(aid).then(response => res.send(response));
     });
 
     // fetch users list
@@ -62,16 +55,14 @@ const serverStart = function (port, api) {
 
 
 const mongodbPort = 27017;
-const { response } = require('express');
 const { MongoClient, ObjectId } = require('mongodb');
-const { useReducer } = require('react/cjs/react.production.min');
 const url = "mongodb://localhost:" + mongodbPort;
 
 
 async function login(credentials) {
     const client = new MongoClient(url);
     await client.connect();
-    const db = client.db('memento');
+    const db = client.db(dbName);
     const collectionUsers = db.collection('users');
     const user = await collectionUsers.findOne(credentials);
     const response = {};
@@ -98,7 +89,7 @@ async function login(credentials) {
 async function signup(userInfo) {
     const client = new MongoClient(url);
     await client.connect();
-    const db = client.db('memento');
+    const db = client.db(dbName);
     const collectionUsers = db.collection('users');
     const user = {
         email: userInfo.email,
@@ -107,19 +98,21 @@ async function signup(userInfo) {
         role: 10
     };
     const profile = {
+        name: userInfo.name,
         gender: userInfo.gender,
         age: userInfo.age,
         createtime: getFormattedTime()
     };
     const response = {};
     try {
-        const insertResult = await collectionUsers.insertOne(user);
-        profile._id = insertResult.insertedId;
-        const collectionProfiles = await collectionProfiles.insertOne(profile);
+        const insertedUser = await collectionUsers.insertOne(user);
+        profile._id = insertedUser.insertedId;
+        const collectionProfiles = db.collection('profiles');
+        await collectionProfiles.insertOne(profile);
         response.success = true;
         response.data = {
             token: {
-                uid: insertResult.insertedId.toHexString(),
+                uid: insertedUser.insertedId.toHexString(),
                 email: userInfo.email,
                 password: userInfo.password,
                 role: 10
@@ -129,18 +122,27 @@ async function signup(userInfo) {
     } catch (e) {
         response.success = false;
         response.error = e;
-        console.log(e + "[signup]");
+        console.error(e + "[signup]");
     }
     client.close();
     return response;
 }
 
-async function getProfileWithUid(uid) {
+async function getProfileByUid(uid) {
+    var formattedId;
+    try {
+        formattedId = new ObjectId(uid);
+    } catch (e) {
+        console.error(e + '[fetch profile with uid]');
+        return {
+            success: false,
+            error: e
+        };
+    }
     const client = new MongoClient(url);
     await client.connect();
-    const db = client.db('memento');
+    const db = client.db(dbName);
     const collectionProfiles = db.collection('profiles');
-    const formattedId = new ObjectId(uid);
     const profile = await collectionProfiles.findOne({ _id: formattedId });
     const response = {};
     if (profile) {
@@ -160,15 +162,16 @@ async function getProfileWithUid(uid) {
 async function getAllAlbumsWithAuth(token) {
     const client = new MongoClient(url);
     await client.connect();
-    const db = client.db('memento');
-    const collectionAlbums = db.collection('albums');
+    const db = client.db(dbName);
+    const collectionUsers = db.collection('users');
     const credentials = {
         email: token.email,
         password: token.password
     }
-    const user = await collectionAlbums.findOne(credentials);
+    const user = await collectionUsers.findOne(credentials);
     const response = {};
     if (user) {
+        const collectionAlbums = db.collection('albums');
         const allAlbums = await collectionAlbums.find({uid: user._id}).toArray();
         allAlbums.forEach((album) => {
             album.aid = album._id.toHexString();
@@ -179,7 +182,7 @@ async function getAllAlbumsWithAuth(token) {
     } else {
         response.success = false,
         response.error = "Authentication failed";
-        console.error("Authentication failed");
+        console.error("Authentication failed[get album list]");
     }
     client.close();
     return response;
@@ -188,25 +191,60 @@ async function getAllAlbumsWithAuth(token) {
 async function getAllUsersWithAuth(token) {
     const client = new MongoClient(url);
     await client.connect();
-    const db = client.db('memento');
+    const db = client.db(dbName);
     const collectionUsers = db.collection('users');
     const credentials = {
         email: token.email,
         password: token.password
     }
-    const result = await collectionUsers.findOne(credentials);
+    const user = await collectionUsers.findOne(credentials);
     const response = {};
-    if (result && result.role <= 1) {
-        const allUsers = await collectionUsers.find({}, {password: 0, role: 0}).toArray();
-        allUsers.forEach((user) => {
-            user.uid = user._id.toHexString();
-            delete user._id;
+    if (user && user.role <= 5) {
+        const allUsers = await collectionUsers.find({ role: { $gt: user.role} }, {password: 0, role: 0}).toArray();
+        allUsers.forEach((_user) => {
+            _user.uid = _user._id.toHexString();
+            delete _user._id;
         });
         response.success = true;
         response.data = allUsers;
     } else {
         response.success = false,
-        response.error = "You do not have the access";
+        response.error = "You do not have the access right";
+        console.error('You do not have the access right[get user list]')
+    }
+    client.close();
+    return response;
+}
+
+async function getAlbumByAid(aid) {
+    var formattedId;
+    try {
+        formattedId = new ObjectId(aid);
+    } catch (e) {
+        console.error('Album not found (aid=' + aid + ')');
+        return {
+            success: false,
+            error: e
+        };
+    }
+    const client = new MongoClient(url);
+    await client.connect();
+    const db = client.db(dbName);
+    const collectionAlbums = db.collection('albums');
+    const album = await collectionAlbums.findOne({ _id: formattedId });
+    const response = {};
+    if (album) {
+        const collectionUsers = db.collection('users');
+        const author = await collectionUsers.findOne({ _id: album.uid });
+        response.success = true;
+        album.aid = album._id.toHexString();
+        delete album._id;
+        album.username = author.name;
+        response.data = album;
+    } else {
+        response.success = false;
+        response.error = 'Album not found (aid=' + aid + ')';
+        console.error('Album not found (aid=' + aid + ')');
     }
     client.close();
     return response;
@@ -218,7 +256,8 @@ const mongodbAPI = {
     signup: signup,  // {email: xxx, password: xxx, gender: xxx, age: xxx}
     getAllAlbumsWithAuth: getAllAlbumsWithAuth,  // {uid: xxx}
     getAllUsersWithAuth: getAllUsersWithAuth,  // token
-    getProfileWithUid: getProfileWithUid  // uid
+    getProfileByUid: getProfileByUid,  // uid
+    getAlbumByAid: getAlbumByAid  // aid
 };
 
-serverStart(8080, mongodbAPI);
+serverStart(serverPort, mongodbAPI);

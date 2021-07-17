@@ -40,7 +40,7 @@ export default function App() {
             <Switch>
                 <Route exact path="/"><Main /></Route>
                 <Route exact path="/dashboard"><Dashboard getToken={getToken} handleLogout={handleLogout} /></Route>
-                <Route exact path="/album/:aid" component={Album} />
+                <Route exact path="/album/:aid" component={() => <Album getToken={getToken} />} />
                 <Route exact path="/users"><Users getToken={getToken} /></Route>
                 <Route exact path="/browse"><Browse /></Route>
                 <Route exact path="/profile/:uid" component={() => <Profile getToken={getToken} />} />

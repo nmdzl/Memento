@@ -12,9 +12,7 @@ async function fetchData(token) {
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({
-            token: token
-        })
+        body: JSON.stringify(token)
     })
     .then(data => data.json());
 }
@@ -57,8 +55,6 @@ class Dashboard extends React.Component {
                 checked: Array(response.data.length).fill(false)
             });
         } else {
-            const { handleLogout } = this.props;
-            handleLogout();
             this.setState({
                 loaded: true,
                 albums: undefined,
@@ -102,7 +98,7 @@ class Dashboard extends React.Component {
         const token = getToken();
         if (!token) {
             return (
-                <div classname="dashboard">
+                <div className="dashboard">
                     <div className="dashboard-title-container">Dashboard</div>
 
                     <div className="dashboard-message-container">You haven't logged in.</div>

@@ -54,7 +54,7 @@ class Navigation extends React.Component {
                                     <>
                                     <button className="navigation-button"
                                         style={focus_css("/profile")}
-                                        onClick={() => history.push("/profile")}
+                                        onClick={() => history.push("/profile/" + token.uid)}
                                         >Profile</button>
                                     <button className="navigation-button"
                                         onClick={handleClickLogout}

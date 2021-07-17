@@ -4,16 +4,13 @@ import '../css/Signup.css';
 import { withRouter } from 'react-router-dom';
 
 
-async function signupUser (info) {
-    console.log(info);
+async function signupUser (userInfo) {
     return fetch('http://localhost:8080/signup', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({
-            info: info
-        })
+        body: JSON.stringify(userInfo)
     })
     .then(data => data.json());
 }
@@ -26,35 +23,48 @@ class Signup extends React.Component {
         if (isAuthed) history.goBack();
 
         this.state = {
+            name: undefined,
             email: undefined,
             password: undefined,
             gender: undefined,
             age: undefined,
-            passwordMatched: false,
+            passwordMatched: true,
             popupPasswordNotMatched: false
         }
 
+        this.setName = this.setName.bind(this);
         this.setEmail = this.setEmail.bind(this);
         this.setPassword = this.setPassword.bind(this);
         this.setGender = this.setGender.bind(this);
         this.setAge = this.setAge.bind(this);
+        this.checkIfMatched = this.checkIfMatched.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
     }
 
+    setName (name) {
+        this.setState({ name: name });
+    }
     setEmail (email) {
         this.setState({ email: email });
     }
-
     setPassword (password) {
-        this.setState({ password: password });
+        this.setState({
+            popupPasswordNotMatched: false,
+            password: password
+        });
     }
-
     setGender (gender) {
         this.setState({ gender: gender });
     }
-
     setAge (age) {
         this.setState({ age: age });
+    }
+
+    checkIfMatched (password) {
+        this.setState({ passwordMatched: this.state.password === password });
+        if (this.state.passwordMatched) {
+            this.setState({ popupPasswordNotMatched: false });
+        }
     }
     
     async handleSubmit (e) {
@@ -67,10 +77,11 @@ class Signup extends React.Component {
             return;
         }
         const response = await signupUser({
+            name: this.state.name,
             email: this.state.email,
             password: this.state.password,
             gender: this.state.gender,
-            age: this.state.age
+            age: parseInt(this.state.age)
         });
         if (response.success) {
             setToken(response.data.token);
@@ -96,6 +107,10 @@ class Signup extends React.Component {
                 <h2>Please Sign up</h2>
                 <form onSubmit={this.handleSubmit}>
                     <label>
+                        <p>Account Name</p>
+                        <input type="text" onChange={e => this.setName(e.target.value)} required />
+                    </label>
+                    <label>
                         <p>Email</p>
                         <input type="text" onChange={e => this.setEmail(e.target.value)} required />
                     </label>
@@ -105,7 +120,7 @@ class Signup extends React.Component {
                     </label>
                     <label>
                         <p>Confirm password</p>
-                        <input ref={ele => this.passwordConfirmElement = ele} type="password" />
+                        <input type="password" ref={ele => this.passwordConfirmElement = ele} onChange={e => this.checkIfMatched(e.target.value)} required />
                         {this.state.popupPasswordNotMatched ? (
                             <p>Error: Password doesn't match.</p>
                         ) : null}
@@ -134,17 +149,9 @@ class Signup extends React.Component {
     componentDidMount() {
         this.passwordConfirmElement.addEventListener('focusout', (e) => {
             this.setState({
-                passwordMatched: this.state.password === e.target.value
+                passwordMatched: this.state.password === e.target.value,
+                popupPasswordNotMatched: this.state.password !== e.target.value
             });
-            if (this.state.popupPasswordNotMatched && this.state.passwordMatched) {
-                this.setState({
-                    popupPasswordNotMatched: false
-                });
-            } else if (!this.state.popupPasswordNotMatched && !this.state.passwordMatched) {
-                this.setState({
-                    popupPasswordNotMatched: true
-                });
-            }
         });
     }
 }

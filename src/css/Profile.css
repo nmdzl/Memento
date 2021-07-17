@@ -39,11 +39,13 @@
 }
 
 div[class^='profile-table-cell'] {
-    height: 100px;
+    margin-top: 30px;
+    margin-bottom: 30px;
     border: none;
     text-align: center;
     font-family: 'Indie Flower', cursive;
     font-size: 40px;
+    overflow-wrap: break-word;
 }
 
 
