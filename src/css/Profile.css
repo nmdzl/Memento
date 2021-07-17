@@ -1,0 +1,71 @@
+:root {
+    --profile-button-width: 300px;
+    --profile-row-buttons-width: var(--profile-button-width);
+    --profile-table-width: calc(80% - 60px);
+    --profile-table-margin-vertical: 30px;
+    --profile-table-cell-1: max(300px, 40%);
+    --profile-table-cell-2: calc(100% - var(--profile-table-cell-1));
+}
+
+.profile-title-container {
+    margin-top: 30px;
+    margin-bottom: 30px;
+    font-family: 'Indie Flower', cursive;
+    font-size: 80px;
+    text-align: center;
+    width: var(--profile-table-width);
+    margin-left: calc((100% - var(--profile-table-width)) / 2);
+    border-bottom: 4px solid black;
+}
+
+.profile-table-container {
+    width: var(--profile-table-width);
+    margin-left: calc((100% - var(--profile-table-width)) / 2);
+    margin-top: var(--profile-table-margin-vertical);
+    margin-bottom: var(--profile-table-margin-vertical);
+}
+
+.profile-row {
+    display: flex;
+    flex-direction: row;
+}
+
+
+.profile-table-cell-1 {
+    width: var(--profile-table-cell-1);
+}
+.profile-table-cell-2 {
+    width: var(--profile-table-cell-2);
+}
+
+div[class^='profile-table-cell'] {
+    height: 100px;
+    border: none;
+    text-align: center;
+    font-family: 'Indie Flower', cursive;
+    font-size: 40px;
+}
+
+
+.profile-row-buttons {
+    width: var(--profile-row-buttons-width);
+    margin-left: calc((100% - var(--profile-row-buttons-width)) / 2);
+}
+.profile-button {
+    cursor: pointer;
+    font-family: 'Indie Flower', cursive;
+    width: var(--profile-button-width);
+    background-color: transparent;
+    border: 2px solid rgb(206, 17, 65);
+    font-size: 40px;
+}
+
+
+.profile-message-container {
+    width: 100%;
+    margin-top: 30px;
+    margin-bottom: 30px;
+    font-family: 'Indie Flower', cursive;
+    font-size: 40px;
+    text-align: center;
+}

@@ -1,0 +1,112 @@
+:root {
+    --gap-button: 20px;
+    --dashboard-button-width: 160px;
+    --dashboard-newalbum-cell-2: var(--dashboard-button-width);
+    --dashboard-newalbum-cell-3: var(--dashboard-button-width);
+    --dashboard-newalbum-cell-1: calc(100% - var(--dashboard-newalbum-cell-2) - var(--dashboard-newalbum-cell-3) - var(--gap-button));
+    --dashboard-table-width: calc(80% - 60px);
+    --dashboard-table-cell-0: 60px;
+    --dashboard-table-cell-1: 200px;
+    --dashboard-table-cell-3: 120px;
+    --dashboard-table-cell-4: 300px;
+    --dashboard-table-cell-2: calc(100% - var(--dashboard-table-cell-0) - var(--dashboard-table-cell-1) - var(--dashboard-table-cell-3) - var(--dashboard-table-cell-4));
+}
+
+.dashboard-title-container {
+    font-family: 'Indie Flower', cursive;
+    font-size: 80px;
+    text-align: center;
+}
+
+.dashboard-table-container {
+    width: var(--dashboard-table-width);
+    margin-left: calc((100% - var(--dashboard-table-width)) / 2);
+}
+
+.dashboard-row {
+    display: flex;
+    flex-direction: row;
+}
+
+.dashboard-table-checkbox {
+    transform: scale(2);
+}
+.dashboard-table-checkbox:hover {
+    cursor:pointer;
+}
+
+.dashboard-newalbum-input {
+    width: 100%;
+    font-family: 'Indie Flower', cursive;
+    font-size: 40px;
+    border: 2px solid rgb(206, 17, 65);
+    box-sizing: border-box;
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+.dashboard-button {
+    cursor: pointer;
+    margin-right: var(--gap-button);
+    margin-bottom: var(--gap-button);
+    font-family: 'Indie Flower', cursive;
+    width: var(--dashboard-button-width);
+    background-color: transparent;
+    border: 2px solid rgb(206, 17, 65);
+    font-size: 40px;
+}
+.dashboard-button:hover {
+    transition: 0.4s;
+    background-color: rgb(214, 140, 159);
+}
+
+.dashboard-newalbum-button {
+    margin-right: 0;
+    margin-left: var(--gap-button);
+}
+
+
+.dashboard-newalbum-cell-1 {
+    width: var(--dashboard-newalbum-cell-1);
+}
+.dashboard-newalbum-cell-2 {
+    width: var(--dashboard-newalbum-cell-2);
+}
+.dashboard-newalbum-cell-3 {
+    width: var(--dashboard-newalbum-cell-3);
+}
+
+
+.dashboard-table-cell-0 {
+    width: var(--dashboard-table-cell-0);
+}
+.dashboard-table-cell-1 {
+    width: var(--dashboard-table-cell-1);
+}
+.dashboard-table-cell-2 {
+    width: var(--dashboard-table-cell-2);
+}
+.dashboard-table-cell-3 {
+    width: var(--dashboard-table-cell-3);
+}
+.dashboard-table-cell-4 {
+    width: var(--dashboard-table-cell-4);
+}
+
+div[class^='dashboard-table-cell'] {
+    margin-left: -2px;
+    margin-top: -2px;
+    border: 2px solid rgb(206, 17, 65);
+    text-align: center;
+    font-family: 'Indie Flower', cursive;
+    font-size: 40px;
+}
+
+.dashboard-message-container {
+    width: 100%;
+    margin-top: 30px;
+    margin-bottom: 30px;
+    font-family: 'Indie Flower', cursive;
+    font-size: 40px;
+    text-align: center;
+}

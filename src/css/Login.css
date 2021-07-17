@@ -1,0 +1,17 @@
+.login-message {
+    color: red;
+}
+
+
+.login-submit {
+    cursor: pointer;
+    width: 100px;
+    border: 1px solid rgb(225, 225, 225);
+    box-shadow: 0 0 0;
+    border-radius: 2px;
+}
+
+.login-submit:hover {
+    box-shadow: 0 0 6px rgb(225, 225, 225);
+    border-radius: 3px;
+}

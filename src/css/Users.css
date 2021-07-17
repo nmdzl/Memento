@@ -1,0 +1,100 @@
+:root {
+    --gap-button: 20px;
+    --users-button-width: 160px;
+    --users-newalbum-cell-2: var(--users-button-width);
+    --users-newalbum-cell-3: var(--users-button-width);
+    --users-newalbum-cell-1: calc(100% - var(--users-newalbum-cell-2) - var(--users-newalbum-cell-3) - var(--gap-button));
+    --users-table-width: calc(80% - 60px);
+    --users-table-cell-0: 60px;
+    --users-table-cell-1: 240px;
+    --users-table-cell-3: 150px;
+    --users-table-cell-4: 150px;
+    --users-table-cell-5: 300px;
+    --users-table-cell-2: calc(100% - var(--users-table-cell-0) - var(--users-table-cell-1) - var(--users-table-cell-3) - var(--users-table-cell-4) - var(--users-table-cell-5));
+}
+
+.users-title-container {
+    font-family: 'Indie Flower', cursive;
+    font-size: 80px;
+    text-align: center;
+}
+
+.users-table-container {
+    width: var(--users-table-width);
+    margin-left: calc((100% - var(--users-table-width)) / 2);
+}
+
+.users-row {
+    display: flex;
+    flex-direction: row;
+}
+
+.users-table-checkbox {
+    transform: scale(2);
+}
+.users-table-checkbox:hover {
+    cursor:pointer;
+}
+
+.users-newalbum-input {
+    width: 100%;
+    font-family: 'Indie Flower', cursive;
+    font-size: 40px;
+    border: 2px solid rgb(206, 17, 65);
+    box-sizing: border-box;
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+.users-button {
+    cursor: pointer;
+    margin-right: var(--gap-button);
+    margin-bottom: var(--gap-button);
+    font-family: 'Indie Flower', cursive;
+    width: var(--users-button-width);
+    background-color: transparent;
+    border: 2px solid rgb(206, 17, 65);
+    font-size: 40px;
+}
+.users-button:hover {
+    transition: 0.4s;
+    background-color: rgb(214, 140, 159);
+}
+
+
+.users-table-cell-0 {
+    width: var(--users-table-cell-0);
+}
+.users-table-cell-1 {
+    width: var(--users-table-cell-1);
+}
+.users-table-cell-2 {
+    width: var(--users-table-cell-2);
+}
+.users-table-cell-3 {
+    width: var(--users-table-cell-3);
+}
+.users-table-cell-4 {
+    width: var(--users-table-cell-4);
+}
+.users-table-cell-5 {
+    width: var(--users-table-cell-5);
+}
+
+div[class^='users-table-cell'] {
+    margin-left: -2px;
+    margin-top: -2px;
+    border: 2px solid rgb(206, 17, 65);
+    text-align: center;
+    font-family: 'Indie Flower', cursive;
+    font-size: 40px;
+}
+
+.users-message {
+    width: 100%;
+    margin-top: 50px;
+    margin-bottom: 50px;
+    font-family: 'Indie Flower', cursive;
+    font-size: 40px;
+    text-align: center;
+}
