@@ -79,6 +79,12 @@ const serverStart = function (port, api) {
         }
     });
 
+    // read vids list by aid
+    app.get('/albumcontents/:aid', (req, res) => {
+        const aid = req.params.aid;
+        api.getVidsByAid(aid).then(response => res.send(response));
+    });
+
     app.listen(port, () => console.log('API is running at port ' + port));
 };
 
@@ -465,6 +471,34 @@ async function getAlbumByAid(aid) {
     return response;
 }
 
+async function getVidsByAid(aid) {
+    var formattedId;
+    try {
+        formattedId = new ObjectId(aid);
+    } catch (e) {
+        console.error('Album not found (aid=' + aid + ')');
+        return {
+            success: false,
+            error: e
+        };
+    }
+    const client = new MongoClient(url);
+    await client.connect();
+    const db = client.db(dbName);
+    const collectionAlbumContents = db.collection('album.contents');
+    const albumContents = await collectionAlbumContents.findOne({ _id: formattedId });
+    const response = {};
+    if (albumContents) {
+        response.success = true;
+        response.data = { vids: albumContents.vids };
+    } else {
+        response.success = false;
+        response.error = "Album not found (aid=" + aid + ")"
+    }
+    client.close();
+    return response;
+}
+
 
 const mongodbAPI = {
     login: login,  // credentials -> {email: xxx, password: xxx}
@@ -476,7 +510,8 @@ const mongodbAPI = {
     getAllUsersWithAuth: getAllUsersWithAuth,  // token
     deleteUsersWithAuth: deleteUsersWithAuth,  // token, aidList
     getProfileByUid: getProfileByUid,  // uid
-    getAlbumByAid: getAlbumByAid  // aid
+    getAlbumByAid: getAlbumByAid,  // aid
+    getVidsByAid: getVidsByAid  // aid
 };
 
 serverStart(serverPort, mongodbAPI);

@@ -75,14 +75,18 @@ class Dashboard extends React.Component {
             this.setState({
                 loaded: true,
                 albums: response.data.albums,
-                checked: Array(response.data.albums.length).fill(false)
+                checked: Array(response.data.albums.length).fill(false),
+                checkedCount: 0,
+                checkedAll: false
             });
         } else {
             console.error(response.error);
             this.setState({
                 loaded: true,
                 albums: undefined,
-                checked: []
+                checked: [],
+                checkedCount: 0,
+                checkedAll: false
             });
         }
     }

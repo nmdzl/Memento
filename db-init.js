@@ -101,6 +101,23 @@ const schemaAlbums = {
     }
 }
 
+const schemaAlbumContents = {
+    $jsonSchema: {
+        bsonType: "object",
+        required: ['vids'],
+        properties: {
+            vids: {
+                bsonType: "array",
+                description: "a list of vids in the album",
+                items: {
+                    bsonType: "string",
+                    description: "vid"
+                }
+            }
+        }
+    }
+}
+
 
 // *******************
 // Insert default data
@@ -162,6 +179,18 @@ const albums = [
     }
 ];
 
+const albumContents = [
+    {
+        _id: new ObjectId("000000000000000000000001"),
+        vids: ["1_NVaujWgBg", "Ys7-6_t7OEQ", "tQ0yjYUFKAE", "3AyMjyHu1bA"]
+    },
+    {
+        _id: new ObjectId("000000000000000000000002"),
+        vids: ["ZAfAud_M_mg"]
+    }
+];
+
+
 
 const insertItems = async (tableName, items) => {
     const client = new MongoClient(url);
@@ -186,6 +215,7 @@ const createDatabaseAndTables = async () => {
     await db.createCollection("users", { validator: schemaUsers });
     await db.createCollection("profiles", { validator: schemaProfiles });
     await db.createCollection("albums", { validator: schemaAlbums });
+    await db.createCollection("album.contents", { validator: schemaAlbumContents });
     await db.collection('users').createIndex({ 'email': 1 }, { unique: true });
     await db.collection('albums').createIndex({ 'uid': 1 });
     client.close();
@@ -200,8 +230,9 @@ const mongodbInit = async function () {
     await dropDatabase();
     await createDatabaseAndTables();
     await insertItems('users', [...admins, ...users]);
-    await insertItems('albums', albums);
     await insertItems('profiles', profiles);
+    await insertItems('albums', albums);
+    await insertItems('album.contents', albumContents);
     console.log("Database " + dbName + " successfully initialized");
 }
 mongodbInit();

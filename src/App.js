@@ -7,6 +7,7 @@ import Main from './components/Main';
 import Dashboard from './components/Dashboard';
 import Album from './components/Album';
 import EditAlbum from './components/EditAlbum';
+import AlbumContents from './components/AlbumContents';
 import Users from './components/Users';
 import Browse from './components/Browse';
 import Profile from './components/Profile';
@@ -44,6 +45,7 @@ export default function App() {
                 <Route exact path="/dashboard/:uid" component={() => <Dashboard getToken={getToken} />} />
                 <Route exact path="/album/:aid" component={() => <Album getToken={getToken} />} />
                 <Route exact path="/album/:aid/edit" component={() => <EditAlbum getToken={getToken} />} />
+                <Route exact path="/album/:aid/contents" component={() => <AlbumContents />} />
                 <Route exact path="/users"><Users getToken={getToken} /></Route>
                 <Route exact path="/browse"><Browse /></Route>
                 <Route exact path="/profile/:uid" component={() => <Profile getToken={getToken} />} />
