@@ -111,3 +111,8 @@ div[class^='dashboard-table-cell'] {
     font-size: 40px;
     text-align: center;
 }
+
+
+.dashboard-table-cell-clickable {
+    cursor: pointer;
+}

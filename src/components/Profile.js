@@ -48,7 +48,7 @@ class Profile extends React.Component {
 
         return (
             <div className="profile">
-                <div className="profile-title-container">Profile</div>
+                <div className="title-font profile-title-container">Profile</div>
 
                 {this.state.loaded ? (
                     this.state.profile ? (
@@ -56,7 +56,7 @@ class Profile extends React.Component {
 
                             <div className="profile-row">
                                 <div className="profile-table-cell-1">UID</div>
-                                <div className="profile-table-cell-2">{this.state.profile.uid}</div>
+                                <div className="profile-table-cell-2">{token.uid}</div>
                             </div>
                             <div className="profile-row">
                                 <div className="profile-table-cell-1">Account name</div>
@@ -64,7 +64,7 @@ class Profile extends React.Component {
                             </div>
                             <div className="profile-row">
                                 <div className="profile-table-cell-1">Email</div>
-                                <div className="profile-table-cell-2">{this.state.profile.email}</div>
+                                <div className="profile-table-cell-2">{token.email}</div>
                             </div>
                             <div className="profile-row">
                                 <div className="profile-table-cell-1">Gender</div>

@@ -1,0 +1,44 @@
+:root {
+    --albumcontents-default-width: 120px;
+    --albumcontents-default-height: 90px;
+    --albumcontents-medium-width: 320px;
+    --albumcontents-medium-height: 180px;
+    --albumcontents-high-width: 480px;
+    --albumcontents-high-height: 360px;
+    --albumcontents-standard-width: 640px;
+    --albumcontents-standard-height: 480px;
+    --albumcontents-maxres-width: 1280px;
+    --albumcontents-maxres-height: 720px;
+}
+
+
+.albumcontents-card-medium {
+    margin: 20px 10px 0 10px;
+    width: calc(var(--albumcontents-medium-width) + 10px);
+    border: 1px solid rgb(206, 17, 65);
+    border-radius: 3px;
+    background-color: rgb(240, 240, 240);
+    font-size: 20px;
+    text-align: center;
+}
+
+.albumcontents-card-medium img {
+    padding: 5px;
+}
+
+.albumcontents-card-medium p.albumcontents-card-title {
+    display: block;
+    font-family: 'Indie Flower', cursive;
+    width: calc(100% - 10px);
+    padding-bottom: 5px;
+    margin: auto;
+}
+
+
+.albumcontents-grid-container {
+    margin: auto;
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}

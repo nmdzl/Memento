@@ -7,18 +7,18 @@ import Main from './components/Main';
 import Dashboard from './components/Dashboard';
 import Album from './components/Album';
 import EditAlbum from './components/EditAlbum';
-import AlbumContents from './components/AlbumContents';
+import AlbumContent from './components/AlbumContent';
 import Users from './components/Users';
-import Browse from './components/Browse';
+import Explore from './components/Explore';
 import Profile from './components/Profile';
 import Login from './components/Login';
 import Signup from './components/Signup';
 import Error from './components/Error';
 
 
-function setToken (tokenValue) {
-    if (tokenValue) {
-        sessionStorage.setItem('token', JSON.stringify(tokenValue));
+function setToken (token) {
+    if (token) {
+        sessionStorage.setItem('token', JSON.stringify(token));
     } else {
         sessionStorage.removeItem('token');
     }
@@ -30,27 +30,42 @@ function getToken () {
     return userToken;
 }
 
+function setUsername (username) {
+    if (username) {
+        sessionStorage.setItem('username', username);
+    } else {
+        sessionStorage.removeItem('username');
+    }
+}
+
+function getUsername () {
+    return sessionStorage.getItem('username');
+}
+
 export default function App() {
-    const [ isAuthed, setIsAuthed ] = useState(false);
     const handleLogout = function () {
+        setUsername(undefined);
         setToken(null);
-        setIsAuthed(false);
+    };
+    const handleLogin = function (username, token) {
+        setUsername(username);
+        setToken(token);
     };
     return (
         <>
         <BrowserRouter>
-            <Navigation getToken={getToken} handleLogout={handleLogout} />
+            <Navigation getUsername={getUsername} getToken={getToken} handleLogout={handleLogout} />
             <Switch>
                 <Route exact path="/"><Main /></Route>
                 <Route exact path="/dashboard/:uid" component={() => <Dashboard getToken={getToken} />} />
                 <Route exact path="/album/:aid" component={() => <Album getToken={getToken} />} />
                 <Route exact path="/album/:aid/edit" component={() => <EditAlbum getToken={getToken} />} />
-                <Route exact path="/album/:aid/contents" component={() => <AlbumContents />} />
+                <Route exact path="/album/:aid/content" component={() => <AlbumContent getToken={getToken} />} />
                 <Route exact path="/users"><Users getToken={getToken} /></Route>
-                <Route exact path="/browse"><Browse /></Route>
+                <Route exact path="/explore"><Explore /></Route>
                 <Route exact path="/profile/:uid" component={() => <Profile getToken={getToken} />} />
-                <Route exact path="/login"><Login isAuthed={isAuthed} setIsAuthed={setIsAuthed} setToken={setToken} /></Route>
-                <Route exact path="/signup"><Signup isAuthed={isAuthed} setIsAuthed={setIsAuthed} setToken={setToken} /></Route>
+                <Route exact path="/login"><Login getUsername={getUsername} handleLogin={handleLogin} handleLogout={handleLogout} /></Route>
+                <Route exact path="/signup"><Signup getUsername={getUsername} setUsername={setUsername} setToken={setToken} /></Route>
                 <Route exact path="/error"><Error /></Route>
             </Switch>
         </BrowserRouter>

@@ -3,6 +3,8 @@ import '../css/Signup.css';
 
 import { withRouter } from 'react-router-dom';
 
+import { Form, Row, Col, Button } from 'react-bootstrap';
+
 
 async function signupUser(data) {
     return fetch('http://localhost:8080/signup', {
@@ -21,8 +23,9 @@ class Signup extends React.Component {
     constructor(props) {
         super(props);
 
-        const { isAuthed, history } = this.props;
-        if (isAuthed) history.goBack();
+        const { getUsername, history } = this.props;
+        const username = getUsername();
+        if (username) history.goBack();
 
         this.state = {
             name: undefined,
@@ -71,7 +74,7 @@ class Signup extends React.Component {
     
     async handleSubmit (e) {
         e.preventDefault();
-        const { setIsAuthed, setToken, history } = this.props;
+        const { setUsername, setToken, history } = this.props;
         if (!this.state.passwordMatched) {
             this.setState({
                 popupPasswordNotMatched: true
@@ -90,12 +93,12 @@ class Signup extends React.Component {
         const response = await signupUser(data);
         if (response.success) {
             setToken(response.data.token);
-            setIsAuthed(true);
+            setUsername(response.data.username);
             history.goBack();
         } else {
             console.error(response.error);
             setToken(null);
-            setIsAuthed(false);
+            setUsername(false);
             this.setState({
                 email: undefined,
                 password: undefined,
@@ -110,7 +113,71 @@ class Signup extends React.Component {
     render() {
         return (
             <div className="signup">
-                <h2>Please Sign up</h2>
+                <div className="title-font signup-title-container">Please Sign Up</div>
+
+                {this.state.popupPasswordNotMatched ? (
+                    <div className="error-font signup-error-container">Error: Password doesn't match.</div>
+                ) : null}
+
+                <div className="signup-form-container">
+                    <Form onSubmit={this.handleSubmit}>
+                        <Form.Group as={Row} className="mb-3" controlId="formHorizontalEmail">
+                            <Form.Label className="cell-font" column sm={4}>Email</Form.Label>
+                            <Col sm={8}>
+                                <Form.Control className="input-font" type="email" placeholder="Please Enter Email" onChange={e => this.setEmail(e.target.value)} required />
+                            </Col>
+                        </Form.Group>
+
+                        <Form.Group as={Row} className="mb-3" controlId="formHorizontalPassword">
+                            <Form.Label className="cell-font" column sm={4}>Password</Form.Label>
+                            <Col sm={8}>
+                                <Form.Control className="input-font" type="password" placeholder="Please Enter Password" minLength="8" onChange={e => this.setPassword(e.target.value)} required />
+                            </Col>
+                        </Form.Group>
+
+                        <Form.Group as={Row} className="mb-3" controlId="formHorizontalConfirmPassword">
+                            <Form.Label className="cell-font" column sm={4}>Confirm Password</Form.Label>
+                            <Col sm={8}>
+                                <Form.Control className="input-font" type="password" placeholder="Please Confirm Password" minLength="8" ref={ele => this.passwordConfirmElement = ele} onChange={e => this.checkIfMatched(e.target.value)} required />
+                            </Col>
+                        </Form.Group>
+
+                        <Form.Group as={Row} className="mb-3" controlId="formHorizontalUsername">
+                            <Form.Label className="cell-font" column sm={4}>Username</Form.Label>
+                            <Col sm={8}>
+                                <Form.Control className="input-font" type="text" placeholder="Please Enter Username" onChange={e => this.setName(e.target.value)} required />
+                            </Col>
+                        </Form.Group>
+
+                        <Form.Group as={Row} className="mb-3" controlId="formHorizontalAge">
+                            <Form.Label className="cell-font" column sm={4}>Age</Form.Label>
+                            <Col sm={8}>
+                                <select className="input-font" onChange={e => this.setGender(e.target.value)} defaultValue="Please select" required>
+                                    <option value="Please select" disabled>Please select</option>
+                                    <option value="Male">Male</option>
+                                    <option value="Female">Female</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </Col>
+                        </Form.Group>
+
+                        <Form.Group as={Row} className="mb-3" controlId="formHorizontalAge">
+                            <Form.Label className="cell-font" column sm={4}>Age</Form.Label>
+                            <Col sm={8}>
+                                <Form.Control className="input-font" type="number" placeholder="Please Enter Your Age" min="1" max="200" onChange={e => this.setAge(e.target.value)} required />
+                            </Col>
+                        </Form.Group>
+
+                        <Form.Group as={Row} className="mb-3">
+                            <Col sm={{ span: 8, offset: 4 }}>
+                                <div className="login-button-wrapper">
+                                    <Button className="cell-font btn-block" type="submit">Sign Up</Button>
+                                </div>
+                            </Col>
+                        </Form.Group>
+                    </Form>
+                </div>
+                {/* <h2>Please Sign up</h2>
                 <form onSubmit={this.handleSubmit}>
                     <label>
                         <p>Account Name</p>
@@ -142,12 +209,12 @@ class Signup extends React.Component {
                     </label>
                     <label>
                         <p>Age</p>
-                        <input type="number" min="1" max="200"onChange={e => this.setAge(e.target.value)} />
+                        <input type="number" min="1" max="200" onChange={e => this.setAge(e.target.value)} />
                     </label>
                     <div className="signup-submit-container">
                         <button className="sigup-submit" type="submit">Sign Up</button>
                     </div>
-                </form>
+                </form> */}
             </div>
         );
     }

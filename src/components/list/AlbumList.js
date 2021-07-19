@@ -1,5 +1,5 @@
 import React from 'react';
-import '../css/AlbumList.css';
+import '../../css/Dashboard.css';
 
 import { withRouter } from 'react-router';
 
@@ -10,7 +10,7 @@ class AlbumList extends React.Component {
         return (
             <>
 
-            {albums.reduce((acc, album, ind) => [...acc, (
+            {albums.map((album, ind) => (
                 <div key={ind} className="dashboard-row">
                     <div className="dashboard-table-cell-0">
                         <input className="dashboard-table-checkbox" checked={checked[ind]} type="checkbox" onChange={() => toggleCheck(ind)} />
@@ -20,7 +20,7 @@ class AlbumList extends React.Component {
                     <div className="dashboard-table-cell-3">{album.size}</div>
                     <div className="dashboard-table-cell-4">{album.createtime}</div>
                 </div>
-            )], [])}
+            ))}
             
             </>
         );

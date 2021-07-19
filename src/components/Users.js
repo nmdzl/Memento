@@ -1,7 +1,7 @@
 import React from 'react';
 import '../css/Users.css';
 
-import UserList from './UserList';
+import UserList from './list/UserList';
 
 import { withRouter } from 'react-router';
 

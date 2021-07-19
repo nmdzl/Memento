@@ -82,7 +82,17 @@ const serverStart = function (port, api) {
     // read vids list by aid
     app.get('/albumcontents/:aid', (req, res) => {
         const aid = req.params.aid;
-        api.getVidsByAid(aid).then(response => res.send(response));
+        api.getContentsByAid(aid).then(response => res.send(response));
+    });
+
+    app.post('/albumcontents', (req, res) => {
+        const data = req.body.data;
+        switch (req.body.type) {
+            // insert vid into album.contents with auth
+            case 'insert':
+                api.insertVidByAidWithAuth(data).then(response => res.send(response));
+                return;
+        }
     });
 
     app.listen(port, () => console.log('API is running at port ' + port));
@@ -94,21 +104,26 @@ const { MongoClient, ObjectId } = require('mongodb');
 const url = "mongodb://localhost:" + mongodbPort;
 
 
-async function login(data) {
-    const credentials = data.credentials;
+async function authenticate(token) {
+    if (!token.email || !token.password) return undefined;
     const client = new MongoClient(url);
     await client.connect();
     const db = client.db(dbName);
     const collectionUsers = db.collection('users');
-    const user = await collectionUsers.findOne(credentials);
+    const user = await collectionUsers.findOne({ email: token.email, password: token.password });
+    client.close();
+    return user;
+}
+
+async function login(data) {
+    const credentials = data.credentials;
+    const user = await authenticate(credentials);
     if (!user) {
-        client.close();
         return {
             success: false,
             error: 'Authentication failed'
         };
     }
-    client.close();
     return {
         success: true,
         data: {
@@ -236,23 +251,18 @@ async function getDashboardByUid(uid) {
 async function createAlbumWithAuth(data) {
     const token = data.token;
     const title = data.title;
-    const client = new MongoClient(url);
-    await client.connect();
-    const db = client.db(dbName);
-    const collectionUsers = db.collection('users');
-    const credentials = {
-        email: token.email,
-        password: token.password
-    }
-    const user = await collectionUsers.findOne(credentials);
+    const user = await authenticate(token);
     if (!user) {
-        client.close();
         return {
             success: false,
             error: "Athentication failed"
         };
     }
+    const client = new MongoClient(url);
+    await client.connect();
+    const db = client.db(dbName);
     const collectionAlbums = db.collection('albums');
+    const collectionAlbumContents = db.collection('album.contents');
     try {
         const insertedAlbum = await collectionAlbums.insertOne({
             uid: user._id,
@@ -260,11 +270,17 @@ async function createAlbumWithAuth(data) {
             createtime: getFormattedTimeString(),
             size: 0
         });
+        const aid = insertedAlbum.insertedId;
+        await collectionAlbumContents.insertOne({
+            _id: aid,
+            title: title,
+            vids: []
+        });
         client.close();
         return {
             success: true,
             data: {
-                aid: insertedAlbum.insertedId.toHexString()
+                aid: aid.toHexString()
             }
         };
     } catch (e) {
@@ -281,22 +297,16 @@ async function updateAlbumWithAuth(data) {
     const token = data.token;
     const aid = data.aid;
     const albumInfo = data.albumInfo;
-    const client = new MongoClient(url);
-    await client.connect();
-    const db = client.db(dbName);
-    const collectionUsers = db.collection('users');
-    const credentials = {
-        email: token.email,
-        password: token.password
-    }
-    const user = await collectionUsers.findOne(credentials);
+    const user = await authenticate(token);
     if (!user) {
-        client.close();
         return {
             success: false,
             error: "Athentication failed"
         };
     }
+    const client = new MongoClient(url);
+    await client.connect();
+    const db = client.db(dbName);
     const collectionAlbums = db.collection('albums');
     var formattedAid;
     try {
@@ -317,124 +327,155 @@ async function updateAlbumWithAuth(data) {
             error: 'You are not the author of the album'
         };
     }
-    const newValues = {
+    const collectionAlbumContents = db.collection('album.contents');
+    const albumContent = await collectionAlbumContents.findOne({ _id: formattedAid });
+    if (!albumContent) {
+        client.close();
+        return {
+            success: false,
+            error: 'Error dealing with persistence of database'
+        };
+    }
+    const newValuesAlbum = {
         $set: {
             title: albumInfo.title,
             intro: albumInfo.intro
         }
     };
-    const updateResult = await collectionAlbums.updateOne({ _id: formattedAid }, newValues);
-    const response = {};
-    if (updateResult.acknowledged) {
-        response.success = true;
-    } else {
-        response.success = false;
-        response.error = "Error updating album";
-    }
+    const newValuesAlbumContent = {
+        $set: {
+            title: albumInfo.title
+        }
+    };
+    const updatePromiseList = [];
+    updatePromiseList.push(new Promise(res => res(collectionAlbums.updateOne({ _id: formattedAid }, newValuesAlbum))));
+    updatePromiseList.push(new Promise(res => res(collectionAlbumContents.updateOne( { _id: formattedAid }, newValuesAlbumContent))));
+    await Promise.all(updatePromiseList);
     client.close();
-    return response;
+    return {
+        success: true,
+        data: null
+    };
 }
 
 async function deleteAlbumsWithAuth(data) {
     const token = data.token;
     const aidList = data.aidList;
-    const client = new MongoClient(url);
-    await client.connect();
-    const db = client.db(dbName);
-    const collectionUsers = db.collection('users');
-    const credentials = {
-        email: token.email,
-        password: token.password
-    }
-    const user = await collectionUsers.findOne(credentials);
+    const user = await authenticate(token);
     if (!user) {
-        client.close();
         return {
             success: false,
             error: "Authentication failed"
         };
     }
+    const client = new MongoClient(url);
+    await client.connect();
+    const db = client.db(dbName);
     const collectionAlbums = db.collection('albums');
-    var promiseList = [];
+    const deletePromiseListAlbums = [];
+    const formattedAidList = [];
     aidList.forEach(aid => {
         try {
             const formattedAid = new ObjectId(aid);
-            promiseList.push(new Promise(res => res(collectionAlbums.deleteOne({ _id: formattedAid, uid: user._id }))));
+            formattedAidList.push(formattedAid);
+            deletePromiseListAlbums.push(new Promise(res => res(collectionAlbums.deleteOne({ _id: formattedAid, uid: user._id }))));
         } catch (e) {
             console.error(e + "[aid=" + aid + "]");
         }
     });
-    const response = await Promise.all(promiseList)
-        .then(results => results.reduce((acc, result) => acc + (result.acknowledged ? result.deletedCount : 0)))
-        .then(count => { return { success: true, data: { count: count } } });
+    const collectionAlbumContents = db.collection('album.contents');
+    const deletePromiseListAlbumContents = [];
+    await Promise.all(deletePromiseListAlbums)
+        .then(results => results.forEach((result, ind) => {
+            if (result.acknowledged) {
+                const formattedAid = formattedAidList[ind];
+                deletePromiseListAlbumContents.push(new Promise(res => res(collectionAlbumContents.deleteOne({ _id: formattedAid }))));
+            }
+        }));
+    await Promise.all(deletePromiseListAlbumContents);
     client.close();
-    return response;
+    return {
+        success: true,
+        data: null
+    };
 }
 
 async function getAllUsersWithAuth(data) {
     const token = data.token;
+    const user = await authenticate(token);
+    if (!user) {
+        return {
+            success: false,
+            error: "Athentication failed"
+        };
+    } else if (user.role > 1) {
+        return {
+            success: false,
+            error: "You do not have the access right"
+        };
+    }
     const client = new MongoClient(url);
     await client.connect();
     const db = client.db(dbName);
     const collectionUsers = db.collection('users');
-    const credentials = {
-        email: token.email,
-        password: token.password
-    }
-    const user = await collectionUsers.findOne(credentials);
-    const response = {};
-    if (user && user.role <= 1) {
-        const allUsers = await collectionUsers.find({ role: { $gt: user.role} }, {password: 0, role: 0}).toArray();
-        allUsers.forEach((_user) => {
-            _user.uid = _user._id.toHexString();
-            delete _user._id;
-        });
-        response.success = true;
-        response.data = { users: allUsers };
-    } else {
-        response.success = false,
-        response.error = "You do not have the access right";
-        console.error('You do not have the access right[get user list]')
-    }
+    const allUsers = await collectionUsers.find({ role: { $gt: user.role} }, {password: 0, role: 0}).toArray();
+    allUsers.forEach((_user) => {
+        _user.uid = _user._id.toHexString();
+        delete _user._id;
+    });
     client.close();
-    return response;
+    return {
+        success: true,
+        data: {
+            users: allUsers
+        }
+    };
 }
 
 async function deleteUsersWithAuth(data) {
     const token = data.token;
     const uidList = data.uidList;
+    const user = await authenticate(token);
+    if (!user) {
+        return {
+            success: false,
+            error: "Athentication failed"
+        };
+    } else if (user.role > 1) {
+        return {
+            success: false,
+            error: "You do not have the access right"
+        };
+    }
     const client = new MongoClient(url);
     await client.connect();
     const db = client.db(dbName);
     const collectionUsers = db.collection('users');
-    const credentials = {
-        email: token.email,
-        password: token.password
-    }
-    const user = await collectionUsers.findOne(credentials);
-    if (user && user.role <= 1) {
-        var promiseList = [];
-        uidList.forEach(uid => {
-            try {
-                const formattedUid = new ObjectId(uid);
-                promiseList.push(new Promise(res => res(collectionUsers.deleteOne({ _id: formattedUid, role: { $gt: user.role } }))));
-            } catch (e) {
-                console.error(e + "[uid=" + uid + "]");
+    const deletePromiseListUsers = [];
+    const formattedUidList = [];
+    uidList.forEach(uid => {
+        try {
+            const formattedUid = new ObjectId(uid);
+            formattedUidList.push(formattedUid);
+            deletePromiseListUsers.push(new Promise(res => res(collectionUsers.deleteOne({ _id: formattedUid, role: { $gt: user.role } }))));
+        } catch (e) {
+            console.error(e + "[uid=" + uid + "]");
+        }
+    });
+    const collectionProfiles = db.collection('profiles');
+    const deletePromiseListProfiles = [];
+    await Promise.all(deletePromiseListUsers)
+        .then(results => results.forEach((result, ind) => {
+            if (result.acknowledged) {
+                const formattedUid = formattedUidList[ind];
+                deletePromiseListProfiles.push(new Promise(res => res(collectionProfiles.deleteOne({ _id: formattedUid }))));
             }
-        });
-        const response = await Promise.all(promiseList)
-            .then(results => results.reduce((acc, result) => acc + (result.acknowledged ? result.deletedCount : 0)))
-            .then(count => { return { success: true, data: { count: count } } });
-        client.close();
-        return response;
-    } else {
-        client.close();
-        console.error("Authentication failed[delete a list of users]");
-        return {
-            success: false,
-            error: "Authentication failed"
-        };
-    }
+        }));
+    client.close();
+    return {
+        success: true,
+        data: null
+    };
 }
 
 async function getAlbumByAid(aid) {
@@ -471,7 +512,7 @@ async function getAlbumByAid(aid) {
     return response;
 }
 
-async function getVidsByAid(aid) {
+async function getContentsByAid(aid) {
     var formattedId;
     try {
         formattedId = new ObjectId(aid);
@@ -490,13 +531,70 @@ async function getVidsByAid(aid) {
     const response = {};
     if (albumContents) {
         response.success = true;
-        response.data = { vids: albumContents.vids };
+        response.data = {
+            title: albumContents.title,
+            vids: albumContents.vids
+        };
     } else {
         response.success = false;
         response.error = "Album not found (aid=" + aid + ")"
     }
     client.close();
     return response;
+}
+
+async function insertVidByAidWithAuth(data) {
+    const token = data.token;
+    const vid = data.vid;
+    const aid = data.aid;
+    var formattedAid;
+    try {
+        formattedAid = new ObjectId(aid);
+    } catch (e) {
+        return {
+            success: false,
+            error: "Invalid vid or aid"
+        };
+    }
+    const user = await authenticate(token);
+    if (!user) {
+        return {
+            success: false,
+            error: "Authentication failed"
+        };
+    }
+    const client = new MongoClient(url);
+    await client.connect();
+    const db = client.db(dbName);
+    const collectionAlbums = db.collection('albums');
+    const album = await collectionAlbums.findOne({ _id: formattedAid, uid: user._id });
+    if (!album) {
+        client.close();
+        return {
+            success: false,
+            error: "Authentication failed"
+        };
+    }
+    const collectionAlbumContents = db.collection('album.contents');
+    const newValuesAlbumContent = {
+        $addToSet: {
+            vids: vid
+        }
+    };
+    const insertResult = await collectionAlbumContents.updateOne({ _id: formattedAid }, newValuesAlbumContent);
+    if (insertResult.acknowledged && insertResult.modifiedCount > 0) {
+        const newValuesAlbum = {
+            $inc: {
+                size: 1
+            }
+        };
+        await collectionAlbums.updateOne({ _id: formattedAid }, newValuesAlbum);
+    }
+    client.close();
+    return {
+        success: true,
+        data: null
+    };
 }
 
 
@@ -511,7 +609,8 @@ const mongodbAPI = {
     deleteUsersWithAuth: deleteUsersWithAuth,  // token, aidList
     getProfileByUid: getProfileByUid,  // uid
     getAlbumByAid: getAlbumByAid,  // aid
-    getVidsByAid: getVidsByAid  // aid
+    getContentsByAid: getContentsByAid,  // aid
+    insertVidByAidWithAuth: insertVidByAidWithAuth  // token, vid, aid
 };
 
 serverStart(serverPort, mongodbAPI);

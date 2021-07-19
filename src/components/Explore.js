@@ -1,10 +1,10 @@
 import React from 'react';
-import '../css/Browse.css';
+import '../css/Explore.css';
 
-export default class Browse extends React.Component {
+export default class Explore extends React.Component {
     render() {
         return (
-            <div className="browse">
+            <div className="explore">
                 <h2>Today's Hit</h2>
             </div>
         );

@@ -7,17 +7,6 @@
     --profile-table-cell-2: calc(100% - var(--profile-table-cell-1));
 }
 
-.profile-title-container {
-    margin-top: 30px;
-    margin-bottom: 30px;
-    font-family: 'Indie Flower', cursive;
-    font-size: 80px;
-    text-align: center;
-    width: var(--profile-table-width);
-    margin-left: calc((100% - var(--profile-table-width)) / 2);
-    border-bottom: 4px solid black;
-}
-
 .profile-table-container {
     width: var(--profile-table-width);
     margin-left: calc((100% - var(--profile-table-width)) / 2);
@@ -40,11 +29,10 @@
 
 div[class^='profile-table-cell'] {
     margin-top: 30px;
-    margin-bottom: 30px;
     border: none;
     text-align: center;
     font-family: 'Indie Flower', cursive;
-    font-size: 40px;
+    font-size: 28px;
     overflow-wrap: break-word;
 }
 
@@ -60,14 +48,4 @@ div[class^='profile-table-cell'] {
     background-color: transparent;
     border: 2px solid rgb(206, 17, 65);
     font-size: 40px;
-}
-
-
-.profile-message-container {
-    width: 100%;
-    margin-top: 30px;
-    margin-bottom: 30px;
-    font-family: 'Indie Flower', cursive;
-    font-size: 40px;
-    text-align: center;
 }

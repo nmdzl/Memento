@@ -104,8 +104,12 @@ const schemaAlbums = {
 const schemaAlbumContents = {
     $jsonSchema: {
         bsonType: "object",
-        required: ['vids'],
+        required: ['title', 'vids'],
         properties: {
+            title: {
+                bsonType: "string",
+                description: "album title"
+            },
             vids: {
                 bsonType: "array",
                 description: "a list of vids in the album",
@@ -165,9 +169,9 @@ const albums = [
         _id: new ObjectId("000000000000000000000001"),
         uid: new ObjectId("000000000000000000000002"),
         createtime: "2020-02-02",
-        title: "Example album 1 for example user",
+        title: "Justin Bieber",
         intro: "Intro of example album 1",
-        size: 1
+        size: 7
     },
     {
         _id: new ObjectId("000000000000000000000002"),
@@ -175,17 +179,19 @@ const albums = [
         createtime: "2020-02-02",
         title: "Example album 2 for example user",
         intro: "Intro of example album 2",
-        size: 2
+        size: 1
     }
 ];
 
 const albumContents = [
     {
         _id: new ObjectId("000000000000000000000001"),
-        vids: ["1_NVaujWgBg", "Ys7-6_t7OEQ", "tQ0yjYUFKAE", "3AyMjyHu1bA"]
+        title: "Justin Bieber",
+        vids: ["1_NVaujWgBg", "Ys7-6_t7OEQ", "tQ0yjYUFKAE", "3AyMjyHu1bA", "DK_0jXPuIr0", "MPbUaIZAaeA", "KIK3azN4w34"]
     },
     {
         _id: new ObjectId("000000000000000000000002"),
+        title: "Example album 2 for example user",
         vids: ["ZAfAud_M_mg"]
     }
 ];

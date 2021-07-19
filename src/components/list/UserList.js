@@ -1,5 +1,5 @@
 import React from 'react';
-import '../css/UserList.css';
+import '../../css/Users.css';
 
 import { withRouter } from 'react-router';
 

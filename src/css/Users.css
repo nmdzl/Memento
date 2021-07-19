@@ -90,6 +90,7 @@ div[class^='users-table-cell'] {
     font-size: 40px;
 }
 
+
 .users-message {
     width: 100%;
     margin-top: 50px;
@@ -97,4 +98,9 @@ div[class^='users-table-cell'] {
     font-family: 'Indie Flower', cursive;
     font-size: 40px;
     text-align: center;
+}
+
+
+.users-table-cell-clickable {
+    cursor: pointer;
 }

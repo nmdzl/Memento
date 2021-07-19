@@ -1,7 +1,7 @@
 import React from 'react';
 import '../css/Dashboard.css';
 
-import AlbumList from './AlbumList';
+import AlbumList from './list/AlbumList';
 
 import { withRouter } from 'react-router-dom';
 

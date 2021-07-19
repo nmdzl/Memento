@@ -1,6 +1,5 @@
 import React from 'react';
 import '../css/Album.css';
-
 import { withRouter } from 'react-router';
 
 
@@ -84,14 +83,15 @@ class Album extends React.Component {
 
         return (
             <div className="album">
-                <div className="album-title-container">{this.state.album ? this.state.album.title : "Album"}</div>
+                <div className="album-horizontal">
+                    <div className="title-font album-title-container clickable" onClick={() => history.push("/album/" + aid + "/content")}>{this.state.album ? this.state.album.title : "Album"}</div>
+                </div>
 
                 {this.state.loaded ? (
                     this.state.album ? (
                         <>
 
-                        <div className="dashboard-row album-table-container">
-                            <button className="dashboard-button" onClick={() => history.push("/album/" + aid + "/contents")}>View Album Contents</button>
+                        <div className="album-row album-table-container">
                             {token.uid === this.state.album.uid ?
                                 <>
 
@@ -100,10 +100,6 @@ class Album extends React.Component {
 
                                 </>
                                 : null}
-                        </div>
-
-                        <div className="album-cover-container">
-                            <img alt={"cover for album"} />
                         </div>
 
                         <div className="album-table-container">

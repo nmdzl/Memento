@@ -3,6 +3,8 @@ import '../css/Login.css';
 
 import { withRouter } from 'react-router-dom';
 
+import { Form, Row, Col, Button } from 'react-bootstrap';
+
 
 async function loginUser (data) {
     return fetch('http://localhost:8080/login', {
@@ -20,9 +22,6 @@ async function loginUser (data) {
 class Login extends React.Component {
     constructor(props) {
         super(props);
-
-        const { isAuthed, history } = this.props;
-        if (isAuthed) history.goBack();
 
         this.state = {
             email: undefined,
@@ -43,7 +42,7 @@ class Login extends React.Component {
     }
 
     async handleSubmit (e) {
-        const { setIsAuthed, setToken, history } = this.props;
+        const { handleLogin, handleLogout, history } = this.props;
         e.preventDefault();
         const data = {
             credentials: {
@@ -53,13 +52,10 @@ class Login extends React.Component {
         };
         const response = await loginUser(data);
         if (response.success) {
-            setToken(response.data.token);
-            setIsAuthed(true);
+            handleLogin(response.data.username, response.data.token);
             history.goBack();
         } else {
-            console.error(response.error);
-            setToken(null);
-            setIsAuthed(false);
+            handleLogout();
             this.setState({
                 email: undefined,
                 password: undefined,
@@ -70,28 +66,47 @@ class Login extends React.Component {
 
     render() {
         return (
-            <div className="login-wrapper">
-                <h2>Please Login</h2>
+            <div className="login">
+                <div className="title-font login-title-container">Please Log In</div>
 
-                {this.state.popupAuthFailed ?
-                    <div className="login-message-container">Authentication failed...</div>
-                    : null}
-                
-                <form onSubmit={this.handleSubmit}>
-                    <label>
-                        <p>Email</p>
-                        <input type="text" onChange={e => this.setEmail(e.target.value)} />
-                    </label>
-                    <label>
-                        <p>Password</p>
-                        <input type="password" onChange={e => this.setPassword(e.target.value)} />
-                    </label>
-                    <div className="login-submit">
-                        <button className="login-submit" type="submit">Login</button>
-                    </div>
-                </form>
+                {this.state.popupAuthFailed ? (
+                    <div className="error-font login-error-container">Authentication failed</div>
+                ) : null}
+
+                <div className="login-form-container">
+                    <Form onSubmit={this.handleSubmit}>
+                        <Form.Group as={Row} className="mb-3" controlId="formHorizontalEmail">
+                            <Form.Label className="cell-font" column sm={4}>Email</Form.Label>
+                            <Col sm={8}>
+                                <Form.Control className="input-font" type="email" placeholder="Please Enter Email" onChange={e => this.setEmail(e.target.value)} required />
+                            </Col>
+                        </Form.Group>
+
+                        <Form.Group as={Row} className="mb-3" controlId="formHorizontalPassword">
+                            <Form.Label className="cell-font" column sm={4}>Password</Form.Label>
+                            <Col sm={8}>
+                                <Form.Control className="input-font" type="password" placeholder="Please Enter Password" minLength="8" onChange={e => this.setPassword(e.target.value)} required />
+                            </Col>
+                        </Form.Group>
+
+                        <Form.Group as={Row} className="mb-3">
+                            <Col sm={{ span: 8, offset: 4 }}>
+                                <div className="login-button-wrapper">
+                                    <Button className="cell-font btn-block" type="submit">Log In</Button>
+                                </div>
+                            </Col>
+                        </Form.Group>
+                    </Form>
+                </div>
             </div>
         );
+    }
+
+    componentDidMount() {
+        const { getUsername, history } = this.props;
+        const username = getUsername();
+        console.log(username);
+        if (username) history.goBack();
     }
 }
 
