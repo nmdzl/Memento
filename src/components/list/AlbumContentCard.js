@@ -73,9 +73,9 @@ class AlbumContentCard extends React.Component {
         const { coversize, vid } = this.props;
 
         return (
-            <div className={"albumcontents-card albumcontents-card-" + coversize + " clickable"} onClick={() => window.location = "https://www.youtube.com/watch?v=" + vid} >
+            <div className={"clickable albumcontent-card albumcontent-card-" + coversize} onClick={() => window.location = "https://www.youtube.com/watch?v=" + vid} >
                 <img src={this.state.loaded && this.state.vidInfo?.snippet?.thumbnails ? this.state.vidInfo.snippet.thumbnails[coversize].url : "/images/error_album-content.png"} alt="" />
-                <p className="albumcontents-card-title">{this.state.loaded && this.state.vidInfo ? this.state.vidInfo.snippet.title : "Loading..."}</p>
+                <p className="albumcontent-card-title">{this.state.loaded && this.state.vidInfo ? this.state.vidInfo.snippet.title : "Loading..."}</p>
             </div>
         );
     }

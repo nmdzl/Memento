@@ -1,54 +1,7 @@
-#img-logo {
-    width: 200px;
-    cursor: pointer;
-}
-
 .navigation {
     width: 100%;
     background:
         linear-gradient(rgb(206, 17, 65), transparent),
         linear-gradient(to top, rgb(112, 92, 201), transparent);
     background-blend-mode: screen;
-}
-
-
-.row {
-    display: flex;
-    flex-direction: row;
-}
-
-#navigation-logo-container {
-    width: 200px;
-}
-
-#navigation-navbar-container {
-    width: calc(100% - 200px - 9px);
-}
-
-
-.row-navbar {
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-end;
-}
-
-.navigation-button {
-    cursor: pointer;
-    display: inline-block;
-    background-color: transparent;
-    padding: 0 20px 0 20px;
-    margin-top: 9px;
-    height: 48px;
-    border: none;
-    border-left: 2px solid rgb(206, 17, 65);
-    border-right: 2px solid rgb(206, 17, 65);
-    margin-left: -2px;
-    box-shadow: 0 0 0;
-    font-size: 24px;
-}
-
-.navigation-button:hover {
-    transition: 0.4s;
-    box-shadow: 0 0 4px rgb(206, 17, 65);
-    border-radius: 3px;
 }

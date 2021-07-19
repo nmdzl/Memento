@@ -3,6 +3,8 @@ import '../css/EditAlbum.css';
 
 import { withRouter } from 'react-router-dom';
 
+import { Form, Row, Col, Button } from 'react-bootstrap';
+
 
 async function fetchData(aid) {
     return fetch('http://localhost:8080/album/' + aid, {
@@ -96,22 +98,37 @@ class EditAlbum extends React.Component {
     }
 
     render() {
+        const { aid } = this.props.match.params;
+        const { history } = this.props;
+
         return (
             <div className="editalbum">
-                <h2>Editing Album</h2>
-                <form onSubmit={this.handleSubmit}>
-                    <label>
-                        <p>Album Title</p>
-                        <input type="text" placeholder={this.state.title} onChange={e => this.setTitle(e.target.value)} />
-                    </label>
-                    <label>
-                        <p>Introduction</p>
-                        <input type="text" placeholder={this.state.intro} onChange={e => this.setIntro(e.target.value)} />
-                    </label>
-                    <div className="editalbum-submit-container">
-                        <button className="editalbum-submit" type="submit">Submit</button>
-                    </div>
-                </form>
+                <div className="title-font editabulm-title-container">Editing Album</div>
+
+                <div className="editalbum-form-container">
+                    <Form onSubmit={this.handleSubmit}>
+                        <Form.Group className="mb-3" controlId="formHorizontalTitle">
+                            <Form.Label className="cell-font">Enter New Title</Form.Label>
+                            <Form.Control className="input-font" type="text" placeholder={this.state.title} onChange={e => this.setTitle(e.target.value)} />
+                        </Form.Group>
+
+                        <Form.Group className="mb-3" controlId="formHorizonalIntro">
+                            <Form.Label className="cell-font">Enter New Intro</Form.Label>
+                            <Form.Control className="input-font" as="textarea" rows={3} placeholder={this.state.intro} onChange={e => this.setIntro(e.target.value)} />
+                        </Form.Group>
+
+                        <Form.Group className="mb-3">
+                            <div className="editalbum-row">
+                                <div className="editalbum-button-wrapper">
+                                    <Button className="cell-font btn-block" type="submit">Submit</Button>
+                                </div>
+                                <div className="editalbum-button-wrapper editalbum-button-anchor-right">
+                                    <Button className="cell-font btn-block btn-danger" onClick={() => history.push("/album/" + aid)}>Cancel</Button>
+                                </div>
+                            </div>
+                        </Form.Group>
+                    </Form>
+                </div>
             </div>
         );
     }
