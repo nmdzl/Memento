@@ -55,7 +55,8 @@ class AlbumContent extends React.Component {
             vids: undefined,
             newVideoUrl: "",
             popupNewVideoUrl: false,
-            popupInvalidUrlMessage: false
+            popupInvalidUrlMessage: false,
+            coversize: "medium"
         };
 
         this.setNewVideoUrl = this.setNewVideoUrl.bind(this);
@@ -123,11 +124,11 @@ class AlbumContent extends React.Component {
 
                 <div className="albumcontents-grid-container">
                     {this.state.loaded && this.state.vids ? (
-                        this.state.vids.map((vid, ind) => <AlbumContentCard key={ind} vid={vid} coversize="medium" />)
+                        this.state.vids.map((vid, ind) => <AlbumContentCard key={ind} vid={vid} coversize={this.state.coversize} />)
                     ) : null}
 
                     {this.state.loaded && this.state.vids ? (
-                        <div ref={ele => this.cardAddNewVideoUrl = ele} className={"albumcontents-card albumcontents-card-" + "medium"} >
+                        <div ref={ele => this.cardAddNewVideoUrl = ele} className={"albumcontents-card albumcontents-card-" + this.state.coversize} >
                             {this.state.popupNewVideoUrl ? (
                                 <>
                                 <input placeholder={this.state.newVideoUrl ? this.state.newVideoUrl : "Enter URL"} onChange={e => this.setNewVideoUrl(e.target.value)} />
