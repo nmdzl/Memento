@@ -2,6 +2,12 @@
 
 Enjoy building your Own Video Album!
 
+## Overview
+
+This is a full stack individual project. The repository is not yet ready for production.
+
+Major functions of the application include building your own albums which include a list of video or music resources (redirecting to the providers) and exploring resources from a variety of providers.
+
 ## Installation
 
 You must have Node.JS and React.JS installed in your system to run this web application.
@@ -71,7 +77,8 @@ Following steps are based on Windows 10 x64.
 1. Integrate third part account authentication like Google, Facebook, etc.
 2. Finish CRUD on *album.contents* database.
 3. Generalize the video types to other websites like *bilibili.com*, *netflix.com*, *itunes.com*, etc.
-4. Embed player.
-5. Enforce encryption of *token* between host and server.
-6. Deploy the server.
-7. Embed advertisement.
+4. Design the Main page and Explore page.
+5. Embed player.
+6. Enforce encryption of *token* between host and server.
+7. Deploy the server.
+8. Embed advertisement.
