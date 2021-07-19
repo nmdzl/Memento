@@ -174,8 +174,7 @@ async function signup(data) {
         };
     } catch (e) {
         response.success = false;
-        response.error = e;
-        console.error(e + "[signup]");
+        response.error = "Email already in use";
     }
     client.close();
     return response;

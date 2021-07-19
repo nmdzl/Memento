@@ -34,7 +34,8 @@ class Signup extends React.Component {
             gender: undefined,
             age: undefined,
             passwordMatched: true,
-            popupPasswordNotMatched: false
+            popupPasswordNotMatched: false,
+            popupErrorMessage: undefined
         }
 
         this.setName = this.setName.bind(this);
@@ -96,7 +97,6 @@ class Signup extends React.Component {
             setUsername(response.data.username);
             history.goBack();
         } else {
-            console.error(response.error);
             setToken(null);
             setUsername(false);
             this.setState({
@@ -105,7 +105,8 @@ class Signup extends React.Component {
                 gender: undefined,
                 age: undefined,
                 passwordMatched: false,
-                popupPasswordNotMatched: false
+                popupPasswordNotMatched: false,
+                popupErrorMessage: response.error
             });
         }
     }
@@ -116,7 +117,11 @@ class Signup extends React.Component {
                 <div className="title-font signup-title-container">Please Sign Up</div>
 
                 {this.state.popupPasswordNotMatched ? (
-                    <div className="error-font signup-error-container">Error: Password doesn't match.</div>
+                    <div className="error-font signup-error-container">Error: Password doesn't match</div>
+                ) : null}
+
+                {this.state.popupErrorMessage ? (
+                    <div className="error-font signup-error-container">{"Error: " + this.state.popupErrorMessage}</div>
                 ) : null}
 
                 <div className="signup-form-container">

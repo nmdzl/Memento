@@ -38,7 +38,8 @@ body {
 }
 
 div[class$="horizontal"], div[class$="message-container"], div[class$="error-container"] {
-  padding-top: 20px;
+  padding-top: 10px;
+  padding-bottom: 10px;
   width: 70%;
   margin: auto;
 }

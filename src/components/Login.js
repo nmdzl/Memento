@@ -57,7 +57,6 @@ class Login extends React.Component {
         } else {
             handleLogout();
             this.setState({
-                email: undefined,
                 password: undefined,
                 popupAuthFailed: true
             });
@@ -85,7 +84,7 @@ class Login extends React.Component {
                         <Form.Group as={Row} className="mb-3" controlId="formHorizontalPassword">
                             <Form.Label className="cell-font" column sm={4}>Password</Form.Label>
                             <Col sm={8}>
-                                <Form.Control className="input-font" type="password" placeholder="Please Enter Password" minLength="8" onChange={e => this.setPassword(e.target.value)} required />
+                                <Form.Control className="input-font" type="password" value={this.state.password || ""} placeholder="Please Enter Password" minLength="8" onChange={e => this.setPassword(e.target.value)} required />
                             </Col>
                         </Form.Group>
 
