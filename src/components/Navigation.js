@@ -19,7 +19,7 @@ class Navigation extends React.Component {
         return (
             <Navbar className="navigation" bg="transparent" variant="dark">
                 <Container>
-                <Navbar.Brand className="nav-font" onClick={() => history.push("/")}>Memento.io</Navbar.Brand>
+                <Navbar.Brand className="nav-font clickable" onClick={() => history.push("/")}>Memento.io</Navbar.Brand>
                 <Nav className="me-auto">
                     <Navbar.Collapse id="basic-navbar-nav">
                         {username ? (

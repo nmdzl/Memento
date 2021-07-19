@@ -5,7 +5,7 @@ export default class Explore extends React.Component {
     render() {
         return (
             <div className="explore">
-                <h2>Today's Hit</h2>
+                <h2>To be continued...</h2>
             </div>
         );
     }

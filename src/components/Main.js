@@ -6,7 +6,8 @@ export default class Main extends React.Component {
         return (
             <>
 
-            <h2>Main</h2>
+            <div className="main-title">Welcome to Memento!</div>
+            <div className="main-paragraph">This is your free video album.</div>
 
             </>
         );
