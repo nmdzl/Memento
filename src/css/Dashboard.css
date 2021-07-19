@@ -1,31 +1,29 @@
 :root {
-    --gap-button: 20px;
+    --major-gap: 20px;
     --dashboard-button-width: 160px;
     --dashboard-newalbum-cell-2: var(--dashboard-button-width);
     --dashboard-newalbum-cell-3: var(--dashboard-button-width);
-    --dashboard-newalbum-cell-1: calc(100% - var(--dashboard-newalbum-cell-2) - var(--dashboard-newalbum-cell-3) - var(--gap-button));
-    --dashboard-table-width: calc(80% - 60px);
-    --dashboard-table-cell-0: 60px;
-    --dashboard-table-cell-1: 200px;
-    --dashboard-table-cell-3: 120px;
-    --dashboard-table-cell-4: 300px;
-    --dashboard-table-cell-2: calc(100% - var(--dashboard-table-cell-0) - var(--dashboard-table-cell-1) - var(--dashboard-table-cell-3) - var(--dashboard-table-cell-4));
-}
-
-.dashboard-title-container {
-    font-family: 'Indie Flower', cursive;
-    font-size: 80px;
-    text-align: center;
+    --dashboard-newalbum-cell-1: calc(100% - var(--dashboard-newalbum-cell-2) - var(--dashboard-newalbum-cell-3) - var(--major-gap));
+    --dashboard-table-width: 70%;
+    --dashboard-table-cell-1: 50px;
+    --dashboard-table-cell-3: max(var(--dashboard-table-cell-1), calc((100% - var(--dashboard-table-cell-1)) * 0.15));
+    --dashboard-table-cell-4: max(calc(var(--dashboard-table-cell-1) * 2), calc((100% - var(--dashboard-table-cell-1)) * 0.35));
+    --dashboard-table-cell-2: calc(100% - var(--dashboard-table-cell-1) - var(--dashboard-table-cell-3) - var(--dashboard-table-cell-4));
 }
 
 .dashboard-table-container {
     width: var(--dashboard-table-width);
-    margin-left: calc((100% - var(--dashboard-table-width)) / 2);
+    margin: auto;
 }
 
 .dashboard-row {
+    width: 100%;
     display: flex;
     flex-direction: row;
+}
+
+.dashboard-button-anchor-right {
+    margin-left: auto;
 }
 
 .dashboard-table-checkbox {
@@ -47,8 +45,7 @@
 
 .dashboard-button {
     cursor: pointer;
-    margin-right: var(--gap-button);
-    margin-bottom: var(--gap-button);
+    margin-bottom: var(--major-gap);
     font-family: 'Indie Flower', cursive;
     width: var(--dashboard-button-width);
     background-color: transparent;
@@ -62,7 +59,7 @@
 
 .dashboard-newalbum-button {
     margin-right: 0;
-    margin-left: var(--gap-button);
+    margin-left: var(--major-gap);
 }
 
 
@@ -77,42 +74,24 @@
 }
 
 
-.dashboard-table-cell-0 {
-    width: var(--dashboard-table-cell-0);
-}
 .dashboard-table-cell-1 {
     width: var(--dashboard-table-cell-1);
+    margin-right: -2px;
 }
 .dashboard-table-cell-2 {
     width: var(--dashboard-table-cell-2);
+    margin-right: -2px;
 }
 .dashboard-table-cell-3 {
     width: var(--dashboard-table-cell-3);
+    margin-right: -2px;
 }
 .dashboard-table-cell-4 {
     width: var(--dashboard-table-cell-4);
 }
 
 div[class^='dashboard-table-cell'] {
-    margin-left: -2px;
+    box-sizing: content-box;
     margin-top: -2px;
     border: 2px solid rgb(206, 17, 65);
-    text-align: center;
-    font-family: 'Indie Flower', cursive;
-    font-size: 40px;
-}
-
-
-.dashboard-message-container {
-    width: 100%;
-    margin-top: 30px;
-    margin-bottom: 30px;
-    font-family: 'Indie Flower', cursive;
-    font-size: 40px;
-    text-align: center;
-}
-
-
-.dashboard-table-cell-clickable {
-    cursor: pointer;
 }

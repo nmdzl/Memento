@@ -41,6 +41,7 @@ class Users extends React.Component {
         this.state = {
             loaded: false,
             users: undefined,
+            profiles: undefined,
             checked: [],
             checkedCount: 0,
             checkedAll: false
@@ -58,6 +59,7 @@ class Users extends React.Component {
             this.setState({
                 loaded: true,
                 users: response.data.users,
+                profiles: response.data.profiles,
                 checked: Array(response.data.users.length).fill(false),
                 checkedCount: 0,
                 checkedAll: false
@@ -67,6 +69,7 @@ class Users extends React.Component {
             this.setState({
                 loaded: true,
                 users: undefined,
+                profiles: undefined,
                 checked: [],
                 checkedCount: 0,
                 checkedAll: false
@@ -148,28 +151,28 @@ class Users extends React.Component {
 
         return (
             <div className="users">
-                <div className="users-title-container">Users List</div>
+                <div className="title-font users-title-container">Users List</div>
 
                 <div className="users-table-container">
 
                     <div className="users-row">
-                        <button className="users-button" onClick={this.handleDelete}>Delete</button>
+                        <button className="users-button users-button-anchor-right" onClick={this.handleDelete}>Delete</button>
                     </div>
 
                     <div className="users-row">
-                        <div ref={ele => this.checkAllBox = ele} className="users-table-cell-0">
+                        <div ref={ele => this.checkAllBox = ele} className="users-table-cell-0 cell-font">
                             {this.state.users && this.state.users.length > 0 ?
                                 <input className="users-table-checkbox" checked={this.state.checkedAll} type="checkbox" onChange={() => this.toggleCheckAll()} />
                                 : null}
                         </div>
-                        <div className="users-table-cell-1">UID</div>
-                        <div className="users-table-cell-2">Name</div>
-                        <div className="users-table-cell-3">Gender</div>
-                        <div className="users-table-cell-4">Age</div>
-                        <div className="users-table-cell-5">Created At</div>
+                        <div className="users-table-cell-1 cell-font">UID</div>
+                        <div className="users-table-cell-2 cell-font">Name</div>
+                        <div className="users-table-cell-3 cell-font">Gender</div>
+                        <div className="users-table-cell-4 cell-font">Age</div>
+                        <div className="users-table-cell-5 cell-font">Created At</div>
                     </div>
                     {this.state.loaded ? 
-                        <UserList users={this.state.users} checked={this.state.checked} toggleCheck={this.toggleCheck} />
+                        <UserList users={this.state.users} profiles={this.state.profiles} checked={this.state.checked} toggleCheck={this.toggleCheck} />
                         :
                         <div className="users-row">
                             <div className="users-message">Loading...</div>

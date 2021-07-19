@@ -9,6 +9,7 @@ body {
 .nav-font {
   font-family: 'Indie Flower', cursive;
   font-size: 24px;
+  text-align: center;
 }
 .cell-font {
   font-family: 'Indie Flower', cursive;
@@ -47,6 +48,10 @@ div[class$="title-container"] {
   padding-top: 30px;
   padding-bottom: 20px;
   margin-bottom: 50px;
-  border: none;
   border-bottom: 2px solid rgb(206, 17, 65);
+}
+
+div[class$="button-wrapper"] {
+  margin-top: 20px;
+  width: 150px;
 }

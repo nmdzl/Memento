@@ -12,13 +12,12 @@ class AlbumList extends React.Component {
 
             {albums.map((album, ind) => (
                 <div key={ind} className="dashboard-row">
-                    <div className="dashboard-table-cell-0">
+                    <div className="dashboard-table-cell-1 cell-font">
                         <input className="dashboard-table-checkbox" checked={checked[ind]} type="checkbox" onChange={() => toggleCheck(ind)} />
                     </div>
-                    <div className="dashboard-table-cell-1">{album.cover}</div>
-                    <div className="dashboard-table-cell-2 dashboard-table-cell-clickable" onClick={() => history.push("/album/" + album.aid)}>{album.title}</div>
-                    <div className="dashboard-table-cell-3">{album.size}</div>
-                    <div className="dashboard-table-cell-4">{album.createtime}</div>
+                    <div className="dashboard-table-cell-2 cell-font clickable" onClick={() => history.push("/album/" + album.aid)}>{album.title}</div>
+                    <div className="dashboard-table-cell-3 cell-font">{album.size}</div>
+                    <div className="dashboard-table-cell-4 cell-font">{album.createtime}</div>
                 </div>
             ))}
             

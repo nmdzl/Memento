@@ -105,7 +105,6 @@ class Login extends React.Component {
     componentDidMount() {
         const { getUsername, history } = this.props;
         const username = getUsername();
-        console.log(username);
         if (username) history.goBack();
     }
 }

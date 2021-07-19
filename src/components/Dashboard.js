@@ -179,7 +179,7 @@ class Dashboard extends React.Component {
 
         return (
             <div className="dashboard">
-                <div className="dashboard-title-container">Dashboard</div>
+                <div className="title-font dashboard-title-container">Dashboard</div>
 
                 <div className="dashboard-table-container">
 
@@ -188,7 +188,7 @@ class Dashboard extends React.Component {
 
                         <div className="dashboard-row">
                             <button className="dashboard-button" onClick={() => this.setPopupNewAlbum(true)}>New</button>
-                            <button className="dashboard-button" onClick={this.handleDelete}>Delete</button>
+                            <button className="dashboard-button dashboard-button-anchor-right" onClick={this.handleDelete}>Delete</button>
                         </div>
 
                         {this.state.popupNewAlbum ? (
@@ -208,22 +208,21 @@ class Dashboard extends React.Component {
                         ) : null}
 
                     <div className="dashboard-row">
-                        <div ref={ele => this.checkAllBox = ele} className="dashboard-table-cell-0">
+                        <div ref={ele => this.checkAllBox = ele} className="dashboard-table-cell-1 cell-font">
                             <input className="dashboard-table-checkbox" checked={this.state.checkedAll} type="checkbox" onChange={() => this.toggleCheckAll()} />
                         </div>
-                        <div className="dashboard-table-cell-1">Cover</div>
-                        <div className="dashboard-table-cell-2">Title</div>
-                        <div className="dashboard-table-cell-3">Size</div>
-                        <div className="dashboard-table-cell-4">Created At</div>
+                        <div className="dashboard-table-cell-2 cell-font">Title</div>
+                        <div className="dashboard-table-cell-3 cell-font">Size</div>
+                        <div className="dashboard-table-cell-4 cell-font">Created At</div>
                     </div>
 
                     {this.state.loaded ? (
                         this.state.albums ?
                             <AlbumList albums={this.state.albums} checked={this.state.checked} toggleCheck={this.toggleCheck} />
                             :
-                            <div className="dashboard-message-container">You don't have access to this page.</div>
+                            <div className="error-font dashboard-error-container">You don't have access to this page.</div>
                     ) : (
-                        <div className="dashboard-message-container">Loading...</div>
+                        <div className="message-font dashboard-message-container">Loading...</div>
                     )}
                 </div>
             </div>

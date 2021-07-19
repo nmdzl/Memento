@@ -1,6 +1,9 @@
 import React from 'react';
 import '../css/Album.css';
+
 import { withRouter } from 'react-router';
+
+import { Button } from 'react-bootstrap';
 
 
 async function fetchData(aid) {
@@ -83,8 +86,8 @@ class Album extends React.Component {
 
         return (
             <div className="album">
-                <div className="album-horizontal">
-                    <div className="title-font album-title-container clickable" onClick={() => history.push("/album/" + aid + "/content")}>{this.state.album ? this.state.album.title : "Album"}</div>
+                <div className="album-title-container">
+                    <div className="title-font clickable" onClick={() => history.push("/album/" + aid + "/content")}>{this.state.album ? this.state.album.title : "Album"}</div>
                 </div>
 
                 {this.state.loaded ? (
@@ -93,12 +96,18 @@ class Album extends React.Component {
 
                         <div className="album-row album-table-container">
                             {token.uid === this.state.album.uid ?
-                                <>
-
-                                <button className="dashboard-button" onClick={() => history.push("/album/" + aid + "/edit")}>Edit</button>
-                                <button className="dashboard-button" onClick={this.handleDelete}>Delete</button>
-
-                                </>
+                                <div className="album-row">
+                                    <div className="album-button-wrapper">
+                                        <Button className="cell-font btn-block" variant="outline-primary" size="lg" onClick={() => history.push("/album/" + aid + "/edit")}>
+                                            Edit
+                                        </Button>
+                                    </div>
+                                    <div className="album-button-anchor-right album-button-wrapper">
+                                        <Button className="cell-font btn-block" variant="danger" size="lg" onClick={this.handleDelete}>
+                                            Delete
+                                        </Button>
+                                    </div>
+                                </div>
                                 : null}
                         </div>
 

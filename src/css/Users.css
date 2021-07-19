@@ -1,22 +1,16 @@
 :root {
-    --gap-button: 20px;
+    --major-gap: 20px;
     --users-button-width: 160px;
     --users-newalbum-cell-2: var(--users-button-width);
     --users-newalbum-cell-3: var(--users-button-width);
-    --users-newalbum-cell-1: calc(100% - var(--users-newalbum-cell-2) - var(--users-newalbum-cell-3) - var(--gap-button));
-    --users-table-width: calc(80% - 60px);
-    --users-table-cell-0: 60px;
-    --users-table-cell-1: 240px;
-    --users-table-cell-3: 150px;
-    --users-table-cell-4: 150px;
-    --users-table-cell-5: 300px;
-    --users-table-cell-2: calc(100% - var(--users-table-cell-0) - var(--users-table-cell-1) - var(--users-table-cell-3) - var(--users-table-cell-4) - var(--users-table-cell-5));
-}
-
-.users-title-container {
-    font-family: 'Indie Flower', cursive;
-    font-size: 80px;
-    text-align: center;
+    --users-newalbum-cell-1: calc(100% - var(--users-newalbum-cell-2) - var(--users-newalbum-cell-3) - var(--major-gap));
+    --users-table-width: 70%;
+    --users-table-cell-0: 50px;
+    --users-table-cell-3: max(100px, calc((100% - var(--users-table-cell-0)) * 0.15));
+    --users-table-cell-4: max(80px, calc((100% - var(--users-table-cell-0)) * 0.05));
+    --users-table-cell-1: calc((100% - var(--users-table-cell-0) - var(--users-table-cell-3) - var(--users-table-cell-4)) * 0.5);
+    --users-table-cell-2: calc((100% - var(--users-table-cell-0) - var(--users-table-cell-3) - var(--users-table-cell-4)) * 0.3);
+    --users-table-cell-5: calc((100% - var(--users-table-cell-0) - var(--users-table-cell-3) - var(--users-table-cell-4)) * 0.2);
 }
 
 .users-table-container {
@@ -27,6 +21,10 @@
 .users-row {
     display: flex;
     flex-direction: row;
+}
+
+.users-button-anchor-right {
+    margin-left: auto;
 }
 
 .users-table-checkbox {
@@ -48,8 +46,7 @@
 
 .users-button {
     cursor: pointer;
-    margin-right: var(--gap-button);
-    margin-bottom: var(--gap-button);
+    margin-bottom: var(--major-gap);
     font-family: 'Indie Flower', cursive;
     width: var(--users-button-width);
     background-color: transparent;
@@ -64,43 +61,30 @@
 
 .users-table-cell-0 {
     width: var(--users-table-cell-0);
+    margin-right: -2px;
 }
 .users-table-cell-1 {
     width: var(--users-table-cell-1);
+    margin-right: -2px;
 }
 .users-table-cell-2 {
     width: var(--users-table-cell-2);
+    margin-right: -2px;
 }
 .users-table-cell-3 {
     width: var(--users-table-cell-3);
+    margin-right: -2px;
 }
 .users-table-cell-4 {
     width: var(--users-table-cell-4);
+    margin-right: -2px;
 }
 .users-table-cell-5 {
     width: var(--users-table-cell-5);
 }
 
 div[class^='users-table-cell'] {
-    margin-left: -2px;
+    box-sizing: content-box;
     margin-top: -2px;
     border: 2px solid rgb(206, 17, 65);
-    text-align: center;
-    font-family: 'Indie Flower', cursive;
-    font-size: 40px;
-}
-
-
-.users-message {
-    width: 100%;
-    margin-top: 50px;
-    margin-bottom: 50px;
-    font-family: 'Indie Flower', cursive;
-    font-size: 40px;
-    text-align: center;
-}
-
-
-.users-table-cell-clickable {
-    cursor: pointer;
 }

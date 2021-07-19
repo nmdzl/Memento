@@ -419,15 +419,24 @@ async function getAllUsersWithAuth(data) {
     const db = client.db(dbName);
     const collectionUsers = db.collection('users');
     const allUsers = await collectionUsers.find({ role: { $gt: user.role} }, {password: 0, role: 0}).toArray();
-    allUsers.forEach((_user) => {
+    const collectionProfiles = db.collection('profiles');
+    const promiseListProfiles = [];
+    const profiles = Array(allUsers.length);
+    allUsers.forEach((user, ind) => {
+        promiseListProfiles.push(new Promise(res => res(collectionProfiles.findOne({ _id: user._id }))).then(profile => [ind, profile]));
+    });
+    await Promise.all(promiseListProfiles)
+        .then(results => results.forEach(result => profiles[result[0]] = result[1]));
+    client.close();
+    allUsers.forEach(_user => {
         _user.uid = _user._id.toHexString();
         delete _user._id;
     });
-    client.close();
     return {
         success: true,
         data: {
-            users: allUsers
+            users: allUsers,
+            profiles: profiles
         }
     };
 }
@@ -471,6 +480,7 @@ async function deleteUsersWithAuth(data) {
                 deletePromiseListProfiles.push(new Promise(res => res(collectionProfiles.deleteOne({ _id: formattedUid }))));
             }
         }));
+    await Promise.all(deletePromiseListProfiles);
     client.close();
     return {
         success: true,
