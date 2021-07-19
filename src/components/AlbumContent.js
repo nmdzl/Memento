@@ -51,7 +51,7 @@ class AlbumContent extends React.Component {
 
         this.state = {
             loaded: false,
-            title: "Loading Album Contents...",
+            title: "Loading Album Content...",
             vids: undefined,
             newVideoUrl: "",
             popupNewVideoUrl: false,
@@ -117,35 +117,31 @@ class AlbumContent extends React.Component {
         const { history } = this.props;
 
         return (
-            <div className="albumcontents">
-                <div className="albumcontents-horizontal">
-                    <div className="title-font albumcontents-title-container clickable" onClick={() => history.push("/album/" + aid)}>{this.state.title}</div>
-                </div>
+            <div className="albumcontent">
+                <div className="title-font clickable albumcontent-title-container" onClick={() => history.push("/album/" + aid)}>{this.state.title}</div>
 
-                <div className="albumcontents-grid-container">
+                <div className="albumcontent-grid-container">
                     {this.state.loaded && this.state.vids ? (
                         this.state.vids.map((vid, ind) => <AlbumContentCard key={ind} vid={vid} coversize={this.state.coversize} />)
                     ) : null}
 
                     {this.state.loaded && this.state.vids ? (
-                        <div ref={ele => this.cardAddNewVideoUrl = ele} className={"albumcontents-card albumcontents-card-" + this.state.coversize} >
+                        <div ref={ele => this.cardAddNewVideoUrl = ele} className={"albumcontent-card albumcontent-card-" + this.state.coversize} >
                             {this.state.popupNewVideoUrl ? (
                                 <>
                                 <input placeholder={this.state.newVideoUrl ? this.state.newVideoUrl : "Enter URL"} onChange={e => this.setNewVideoUrl(e.target.value)} />
-                                <button className="albumcontents-card-button" onClick={this.addVideoUrl}>Add</button>
-                                <button className="albumcontents-card-button" onClick={() => this.setPopupNewVideoUrl(false)}>Cancel</button>
+                                <button className="albumcontent-card-button" onClick={this.addVideoUrl}>Add</button>
+                                <button className="albumcontent-card-button" onClick={() => this.setPopupNewVideoUrl(false)}>Cancel</button>
                                 </>
                             ) : (
-                                <button className="albumcontents-card-button-whole" onClick={() => this.setPopupNewVideoUrl(true)}>Add</button>
+                                <button className="albumcontent-card-button-whole" onClick={() => this.setPopupNewVideoUrl(true)}>Add</button>
                             )}
                         </div>
                     ) : null}
                 </div>
 
                 {!this.state.loaded ? (
-                    <div className="albumcontents-horizontal">
-                        <div className="albumcontents-message-container">Loading...</div>
-                    </div>
+                    <div className="message-font albumcontent-message-container">Loading...</div>
                 ) : null}
             </div>
         );

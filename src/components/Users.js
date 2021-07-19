@@ -140,11 +140,9 @@ class Users extends React.Component {
         if (!token || !token.role || token.role > 1) {
             return (
                 <div className="users">
-                    <div className="users-title-container">Users List</div>
+                    <div className="title-font users-title-container">Users List</div>
 
-                    <div className="users-row">
-                        <div className="users-message">You don't have the access right to this page.</div>
-                    </div>
+                    <div className="error-font users-error-container">You don't have the access right to this page.</div>
                 </div>
             );
         }
@@ -174,9 +172,7 @@ class Users extends React.Component {
                     {this.state.loaded ? 
                         <UserList users={this.state.users} profiles={this.state.profiles} checked={this.state.checked} toggleCheck={this.toggleCheck} />
                         :
-                        <div className="users-row">
-                            <div className="users-message">Loading...</div>
-                        </div>
+                        <div className="message-font users-message-container">Loading...</div>
                     }
                 </div>
             </div>

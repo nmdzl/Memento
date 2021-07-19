@@ -83,10 +83,10 @@ class Profile extends React.Component {
                             ) : null}
                         </div>
                     ) : (
-                        <div className="profile-message-container">Profile not found</div>
+                        <div className="error-font profile-error-container">Profile not found</div>
                     )
                 ) : (
-                    <div className="profile-message-container">Loading...</div>
+                    <div className="message-font profile-message-container">Loading...</div>
                 )}
             </div>
         );

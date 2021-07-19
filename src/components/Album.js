@@ -36,7 +36,8 @@ class Album extends React.Component {
 
         this.state = {
             loaded: false,
-            album: undefined
+            album: undefined,
+            popupErrorMessage: undefined
         };
 
         this.loadAlbum = this.loadAlbum.bind(this);
@@ -48,13 +49,15 @@ class Album extends React.Component {
         if (response.success) {
             this.setState({
                 loaded: true,
-                album: response.data.album
+                album: response.data.album,
+                popupErrorMessage: undefined
             });
         } else {
             console.error(response.error);
             this.setState({
                 loaded: true,
-                album: undefined
+                album: undefined,
+                popupErrorMessage: response.error
             });
         }
     }
@@ -133,10 +136,10 @@ class Album extends React.Component {
 
                         </>
                     ) : (
-                        <div className="album-message-container">Profile not found</div>
+                        <div className="error-font album-error-container">{this.state.popupErrorMessage}</div>
                     )
                 ) : (
-                    <div className="album-message-container">Loading...</div>
+                    <div className="message-font album-message-container">Loading...</div>
                 )}
             </div>
         );

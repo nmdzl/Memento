@@ -1,20 +1,20 @@
 :root {
-    --albumcontents-default-width: 120px;
-    --albumcontents-default-height: 90px;
-    --albumcontents-medium-width: 320px;
-    --albumcontents-medium-height: 180px;
-    --albumcontents-high-width: 480px;
-    --albumcontents-high-height: 360px;
-    --albumcontents-standard-width: 640px;
-    --albumcontents-standard-height: 480px;
-    --albumcontents-maxres-width: 1280px;
-    --albumcontents-maxres-height: 720px;
+    --albumcontent-default-width: 120px;
+    --albumcontent-default-height: 90px;
+    --albumcontent-medium-width: 320px;
+    --albumcontent-medium-height: 180px;
+    --albumcontent-high-width: 480px;
+    --albumcontent-high-height: 360px;
+    --albumcontent-standard-width: 640px;
+    --albumcontent-standard-height: 480px;
+    --albumcontent-maxres-width: 1280px;
+    --albumcontent-maxres-height: 720px;
 }
 
 
-.albumcontents-card-medium {
+.albumcontent-card-medium {
     margin: 20px 10px 0 10px;
-    width: calc(var(--albumcontents-medium-width) + 10px);
+    width: calc(var(--albumcontent-medium-width) + 10px);
     border: 1px solid rgb(206, 17, 65);
     border-radius: 3px;
     background-color: rgb(240, 240, 240);
@@ -22,11 +22,11 @@
     text-align: center;
 }
 
-.albumcontents-card-medium img {
+.albumcontent-card-medium img {
     padding: 5px;
 }
 
-.albumcontents-card-medium p.albumcontents-card-title {
+.albumcontent-card-medium p.albumcontent-card-title {
     display: block;
     font-family: 'Indie Flower', cursive;
     width: calc(100% - 10px);
@@ -35,7 +35,7 @@
 }
 
 
-.albumcontents-grid-container {
+.albumcontent-grid-container {
     margin: auto;
     width: 100%;
     display: flex;

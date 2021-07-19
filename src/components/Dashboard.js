@@ -54,7 +54,8 @@ class Dashboard extends React.Component {
             checked: [],
             checkedCount: 0,
             checkedAll: false,
-            popupNewAlbum: false
+            popupNewAlbum: false,
+            popupErrorMessage: undefined
         };
 
         this.setPopupNewAlbum = this.setPopupNewAlbum.bind(this);
@@ -77,16 +78,17 @@ class Dashboard extends React.Component {
                 albums: response.data.albums,
                 checked: Array(response.data.albums.length).fill(false),
                 checkedCount: 0,
-                checkedAll: false
+                checkedAll: false,
+                popupErrorMessage: undefined
             });
         } else {
-            console.error(response.error);
             this.setState({
                 loaded: true,
                 albums: undefined,
                 checked: [],
                 checkedCount: 0,
-                checkedAll: false
+                checkedAll: false,
+                popupErrorMessage: response.error
             });
         }
     }
@@ -220,7 +222,7 @@ class Dashboard extends React.Component {
                         this.state.albums ?
                             <AlbumList albums={this.state.albums} checked={this.state.checked} toggleCheck={this.toggleCheck} />
                             :
-                            <div className="error-font dashboard-error-container">You don't have access to this page.</div>
+                            <div className="error-font dashboard-error-container">{this.state.popupErrorMessage}</div>
                     ) : (
                         <div className="message-font dashboard-message-container">Loading...</div>
                     )}

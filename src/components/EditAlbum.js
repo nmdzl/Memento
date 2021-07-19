@@ -102,7 +102,7 @@ class EditAlbum extends React.Component {
                 <form onSubmit={this.handleSubmit}>
                     <label>
                         <p>Album Title</p>
-                        <input type="text" placeholder={this.state.title} onChange={e => this.setTitle(e.target.value)} required />
+                        <input type="text" placeholder={this.state.title} onChange={e => this.setTitle(e.target.value)} />
                     </label>
                     <label>
                         <p>Introduction</p>
