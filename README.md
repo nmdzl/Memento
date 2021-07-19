@@ -36,7 +36,7 @@ Two database options are provided - local database (fake database) and MongoDB A
 
 After initialization, the database includes 4 collections: `users`, `profiles`, `albums`, `album.contents`. Check `db-init.js` for the details of schemas.
 
-## Initial Accounts
+### Initial Accounts
 
 #### admin account
 
@@ -50,7 +50,7 @@ email: user@memento.io
 
 password: 22222222
 
-## How to Setup Local Database
+### How to Setup Local Database
 
 Following steps are based on Windows 10 x64.
 
