@@ -65,3 +65,13 @@ Following steps are based on Windows 10 x64.
 2. Start *mongodb* process by `mongod --dbpath=/data`.
 3. Navigate to the project directory *.../memento*.
 4. Run `node db-init.js` to automatically drop the existing database and re-initialize the fake database.
+
+## Future work
+
+1. Integrate third part account authentication like Google, Facebook, etc.
+2. Finish CRUD on *album.contents* database.
+3. Generalize the video types to other websites like *bilibili.com*, *netflix.com*, *itunes.com*, etc.
+4. Embed player.
+5. Enforce encryption of *token* between host and server.
+6. Deploy the server.
+7. Embed advertisement.
