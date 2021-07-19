@@ -1,10 +1,17 @@
 # Memento - Free Video Album
 
-Enjoy building your Free Vide Album!
+Enjoy building your Own Video Album!
 
-## Instructions
+## Installation
 
 You must have Node.JS and React.JS installed in your system to run this web application.
+
+## Front-end Compilation
+
+1. Navigate to the project directory *.../memento*.
+2. Run `npm install`.
+3. Run `npm start`.
+4. You can access the app application on *localhost:3000*.
 
 ## Server
 
