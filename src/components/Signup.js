@@ -5,9 +5,11 @@ import { withRouter } from 'react-router-dom';
 
 import { Form, Row, Col, Button } from 'react-bootstrap';
 
+import { serverUrl } from '../server-config';
+
 
 async function signupUser(data) {
-    return fetch('http://localhost:8080/signup', {
+    return fetch(serverUrl + '/signup', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'

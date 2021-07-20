@@ -1,5 +1,5 @@
 const dbName = 'memento';
-const serverPort = 8080;
+const serverPort = process.env.PORT || 80;
 const uri = "mongodb+srv://cluster0.1wtwo.mongodb.net/myFirstDatabase?authSource=%24external&authMechanism=MONGODB-X509&retryWrites=true&w=majority";
 const fs = require('fs');
 const { MongoClient, ObjectId } = require('mongodb');

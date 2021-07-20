@@ -5,9 +5,11 @@ import AlbumList from './list/AlbumList';
 
 import { withRouter } from 'react-router-dom';
 
+import { serverUrl } from '../server-config';
+
 
 async function fetchData(uid) {
-    return fetch('http://localhost:8080/dashboard/' + uid, {
+    return fetch(serverUrl + '/dashboard/' + uid, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json'
@@ -17,7 +19,7 @@ async function fetchData(uid) {
 }
 
 async function postDeleteRequest(data) {
-    return fetch('http://localhost:8080/album', {
+    return fetch(serverUrl + '/album', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -31,7 +33,7 @@ async function postDeleteRequest(data) {
 }
 
 async function postNewAlbum(data) {
-    return fetch('http://localhost:8080/album', {
+    return fetch(serverUrl + '/album', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'

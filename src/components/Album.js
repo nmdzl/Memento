@@ -5,9 +5,11 @@ import { withRouter } from 'react-router';
 
 import { Button } from 'react-bootstrap';
 
+import { serverUrl } from '../server-config';
+
 
 async function fetchData(aid) {
-    return fetch('http://localhost:8080/album/' + aid, {
+    return fetch(serverUrl + '/album/' + aid, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json'
@@ -17,7 +19,7 @@ async function fetchData(aid) {
 }
 
 async function postDeleteRequest(data) {
-    return fetch('http://localhost:8080/album', {
+    return fetch(serverUrl + '/album', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
