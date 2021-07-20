@@ -27,6 +27,10 @@ const serverStart = function (port, api) {
     app.use(express.json());
     app.use(cors());
 
+    app.get('/', (req, res) => {
+        res.render('index', {});
+    });
+
     // user log in
     app.post('/login', async (req, res) => {
         const data = req.body.data;
