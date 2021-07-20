@@ -16,7 +16,7 @@ You must have Node.JS and React.JS installed in your system to run this web appl
 
 1. Navigate to the project directory *.../memento*.
 2. Run `npm install`.
-3. Run `npm start`.
+3. Run `npm start-frontend`. (**Notice**: Run `npm start` will deploy the frontend and start the server communicating with MongoDB Atlas in parallel.)
 4. You can access the app application on *localhost:3000*.
 
 ## Server
