@@ -8,7 +8,7 @@
     --dashboard-table-cell-1: 50px;
     --dashboard-table-cell-3: max(var(--dashboard-table-cell-1), calc((100% - var(--dashboard-table-cell-1)) * 0.15));
     --dashboard-table-cell-4: max(calc(var(--dashboard-table-cell-1) * 2), calc((100% - var(--dashboard-table-cell-1)) * 0.35));
-    --dashboard-table-cell-2: calc(100% - var(--dashboard-table-cell-1) - var(--dashboard-table-cell-3) - var(--dashboard-table-cell-4));
+    /* --dashboard-table-cell-2: calc(100% - var(--dashboard-table-cell-1) - var(--dashboard-table-cell-3) - var(--dashboard-table-cell-4)); */
 }
 
 .dashboard-table-container {
@@ -79,7 +79,7 @@
     margin-right: -2px;
 }
 .dashboard-table-cell-2 {
-    width: var(--dashboard-table-cell-2);
+    /* width: var(--dashboard-table-cell-2); */
     margin-right: -2px;
 }
 .dashboard-table-cell-3 {
