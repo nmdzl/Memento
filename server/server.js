@@ -25,11 +25,8 @@ const serverStart = function (port, api) {
     const app = express();
 
     app.use(express.json());
+    app.use(express.static('./public'));
     app.use(cors());
-
-    app.get('/', (req, res) => {
-        res.render('index', {});
-    });
 
     // user log in
     app.post('/login', async (req, res) => {
