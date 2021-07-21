@@ -19,7 +19,7 @@ async function fetchData(uid) {
 }
 
 async function postDeleteRequest(data) {
-    return fetch(url + 'album', {
+    return fetch(url + '/album', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'

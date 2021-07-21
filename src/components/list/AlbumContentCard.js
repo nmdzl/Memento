@@ -4,7 +4,7 @@ import '../../css/AlbumContent.css';
 import { withRouter } from 'react-router';
 
 
-const buildYoutubeVideoApi = (vid) => "https://www.googleapis.com/youtube/v3/videos?id=" + vid + "&key=AIzaSyBYNwfhjqubq1F57d8SrzeW11ByAd9FJ8k&fields=items(snippet(title,thumbnails),statistics)&part=snippet,statistics";
+const buildYoutubeVideoApi = (vid) => "https://www.googleapis.com/youtube/v3/videos?id=" + vid + "&key=AIzaSyAkQcjm3zx3t9mVV4sDovmMdsLk7HP-YBA&fields=items(snippet(title,thumbnails),statistics)&part=snippet,statistics";
 
 /* response.data ->
  * snippet: {
@@ -28,7 +28,7 @@ async function fetchDataYoutubeVideo(vid) {
         }
     })
     .then(data => data.json());
-    if (response.items.length === 0) {
+    if (!response.items || response.items.length === 0) {
         return {
             success: false,
             error: "Invalid vid for Youtube video [vid=" + vid + "]"
@@ -73,7 +73,7 @@ class AlbumContentCard extends React.Component {
         const { coversize, vid } = this.props;
 
         return (
-            <div className={"clickable albumcontent-card albumcontent-card-" + coversize} onClick={() => window.location = "https://www.youtube.com/watch?v=" + vid} >
+            <div className={"clickable albumcontent-card albumcontent-card-" + coversize} onClick={() => window.open("https://www.youtube.com/watch?v=" + vid)} >
                 <img src={this.state.loaded && this.state.vidInfo?.snippet?.thumbnails ? this.state.vidInfo.snippet.thumbnails[coversize].url : "/images/error_album-content.png"} alt="" />
                 <p className="albumcontent-card-title">{this.state.loaded && this.state.vidInfo ? this.state.vidInfo.snippet.title : "Loading..."}</p>
             </div>
