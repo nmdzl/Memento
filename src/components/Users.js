@@ -5,9 +5,11 @@ import UserList from './list/UserList';
 
 import { withRouter } from 'react-router';
 
+import url from '../serverAPI';
+
 
 async function fetchData(data) {
-    return fetch('http://localhost:8080/user', {
+    return fetch(url + '/user', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -21,7 +23,7 @@ async function fetchData(data) {
 }
 
 async function postDeleteRequest(data) {
-    return fetch('http://localhost:8080/user', {
+    return fetch(url + '/user', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'

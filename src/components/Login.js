@@ -5,9 +5,11 @@ import { withRouter } from 'react-router-dom';
 
 import { Form, Row, Col, Button } from 'react-bootstrap';
 
+import url from '../serverAPI';
+
 
 async function loginUser (data) {
-    return fetch('http://localhost:8080/login', {
+    return fetch(url + '/login', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'

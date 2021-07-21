@@ -5,6 +5,8 @@ import AlbumContentCard from './list/AlbumContentCard';
 
 import { withRouter } from 'react-router';
 
+import url from '../serverAPI';
+
 
 const youtubeUrlRegex = /^(?:https?:)?(?:\/\/)?(?:youtu\.be\/|(?:www\.|m\.)?youtube\.com\/(?:watch|v|embed)(?:\.php)?(?:\?.*v=|\/))([a-zA-Z0-9\_-]{7,15})(?:[\?&][a-zA-Z0-9\_-]+=[a-zA-Z0-9\_-]+)*$/g;
 const getVidFromUrl = (url) => {
@@ -18,7 +20,7 @@ const getVidFromUrl = (url) => {
 }
 
 async function fetchVids(aid) {
-    return fetch('http://localhost:8080/albumcontents/' + aid, {
+    return fetch(url + '/albumcontents/' + aid, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json'
@@ -28,7 +30,7 @@ async function fetchVids(aid) {
 }
 
 async function insertVidByAid(token, vid, aid) {
-    return fetch('http://localhost:8080/albumcontents', {
+    return fetch(url + '/albumcontents', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'

@@ -20,8 +20,8 @@ const buildYoutubeVideoApi = (vid) => "https://www.googleapis.com/youtube/v3/vid
  * statistics: {viewCount: xxx, likeCount: xxx, dislikeCount: xxx, favoriteCount: xxx, commentCount: xxx}
  */
 async function fetchDataYoutubeVideo(vid) {
-    const api = buildYoutubeVideoApi(vid);
-    const response = await fetch(api, {
+    const CDNapi = buildYoutubeVideoApi(vid);
+    const response = await fetch(CDNapi, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json'

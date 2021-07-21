@@ -3,9 +3,11 @@ import '../css/Profile.css';
 
 import { withRouter } from 'react-router';
 
+import url from '../serverAPI';
+
 
 async function fetchData(uid) {
-    return fetch('http://localhost:8080/profile/' + uid, {
+    return fetch(url + '/profile/' + uid, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json'

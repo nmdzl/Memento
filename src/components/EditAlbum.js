@@ -3,11 +3,13 @@ import '../css/EditAlbum.css';
 
 import { withRouter } from 'react-router-dom';
 
-import { Form, Row, Col, Button } from 'react-bootstrap';
+import { Form, Button } from 'react-bootstrap';
+
+import url from '../serverAPI';
 
 
 async function fetchData(aid) {
-    return fetch('http://localhost:8080/album/' + aid, {
+    return fetch(url + '/album/' + aid, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json'
@@ -17,7 +19,7 @@ async function fetchData(aid) {
 }
 
 async function editAlbum (data) {
-    return fetch('http://localhost:8080/album', {
+    return fetch(url + '/album', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
