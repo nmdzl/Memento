@@ -1,5 +1,5 @@
-const serverURL = "http://localhost";
-const serverPort = 8080;
+const serverURL = "https://toy-memento-server.herokuapp.com";
+const serverPort = 80;
 
 const url = serverURL + ":" + serverPort
 
