@@ -1,7 +1,0 @@
-.navigation {
-    width: 100%;
-    background:
-        linear-gradient(rgb(206, 17, 65), transparent),
-        linear-gradient(to top, rgb(112, 92, 201), transparent);
-    background-blend-mode: screen;
-}

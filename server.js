@@ -5,7 +5,7 @@ const fs = require('fs');
 const { MongoClient, ObjectId } = require('mongodb');
 
 const newClient = () => {
-    const credentials = fs.readFileSync('./server/credentialsDir.txt');
+    const credentials = fs.readFileSync('./credentialsDir.txt');
     return new MongoClient(uri, {
         sslKey: credentials,
         sslCert: credentials
@@ -25,7 +25,6 @@ const serverStart = function (port, api) {
     const app = express();
 
     app.use(express.json());
-    app.use(express.static('./public'));
     app.use(cors());
 
     // user log in
