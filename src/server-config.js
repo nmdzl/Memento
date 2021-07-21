@@ -1,6 +1,6 @@
 // heroku server configuration
 const serverPort = process.env.PORT || 80;
-const serverUrl = "https://toy-memento.herokuapp.com:" + serverPort;
+const serverUrl = "https://localhost:" + serverPort;
 
 
 export {
